@@ -1,6 +1,6 @@
-= Building a REST instance
+# Building a REST instance
 
-== Configuration
+## Configuration
 
 You need the following repos checked out:
 
@@ -12,13 +12,13 @@ The shell variable REPO_HOME should point to where these repos are checked out.
 
 ansible-perlbrew should be inside the root of ensembl-rest-deploy.
 
-== Create VM
+## Create VM
 
 Create a VM according to the SOP, use the file cloudinit.cfg as the "User Data" field to seed the cloud-init when the machine is built. Note down the IP of the VM when it's launched.
 
 The cloud-init will update the VM, install some minimal packages, and do a reboot.  So it should take about 90 seconds to fully boot.
 
-== SSH configuration
+## SSH configuration
 
 You need an ssh configuration similar to
 
@@ -42,11 +42,11 @@ Host 192.168.0.*
 
 Where you have your private key on the rest.ensembl.org host is up to you.
 
-== Configure deployment
+## Configure deployment
 
 
 
-== Running Ansible
+## Running Ansible
 
 You'll need at least Ansible 2.1 running on your local machine. Virtualenv is a great tool for keeping this install separate from your system python. Then to deploy the REST server, pick one of the following commands. Substitute the IP from the VM creation step for the one in the command below.
 
