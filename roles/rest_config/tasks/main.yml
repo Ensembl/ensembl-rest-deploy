@@ -1,0 +1,54 @@
+#- name: Copy REST private repo key
+#  copy: src="{{ git_key_file }}" dest="{{ rest_install_dir }}" mode=0400
+#  register: rest_private_key
+
+#- name: Install Ensembl REST private repo
+#  git: repo="{{ item.repo }}" dest="{{ rest_install_dir }}/{{ item.dir }}" version="{{ item.version | default(ensembl_release) }}" clone=yes accept_hostkey=yes key_file="{{ rest_install_dir}}/{{ git_key_file|basename }}"
+#  with_items:
+#       - { repo: 'ssh://git@github.com/Ensembl/ensembl-rest_private.git', dir: ensembl-rest_private, version: "master" }
+#  when: rest_private_key
+#  register: rest_private_exists
+
+#- name: REST configuration file
+#  template: src="{{ item.src }}" dest="{{ item.dest }}" owner="{{ rest_user }}" mode=0644
+#  with_items:
+#       - { src: "{{ rest_install_dir }}/ensembl-rest_private/rest.ensembl.org/conf/ensembl_rest.conf.j2 }}", dest: "{{ rest_install_dir }}/ensembl-rest/configurations/production/ensembl_rest.conf" }
+#  when: rest_private_exists
+
+#- name: Set the release vars filename
+#  set_fact: release_vars="{{ rest_private_dir }}/conf/release.yml"
+#  register: release_set
+
+#- name: Load release vars
+#  include_vars: file="{{ release_vars }}"
+#  when: release_set
+#  register: release_loaded
+
+- name: Create local copy of REST configs
+  local_action: template src="{{ item.src }}" dest="{{ item.dest }}" mode=0640
+  with_items:
+    - { src: "{{ rest_private_dir }}/conf/ensembl_rest.conf.j2", dest: "{{ rest_private_dir }}/conf/ensembl_rest.conf" }
+    - { src: "{{ rest_private_dir }}/conf/ensrest.psgi.j2", dest: "{{ rest_private_dir }}/conf/ensrest.psgi" }
+    - { src: "{{ rest_private_dir }}/conf/ga_references.json.j2", dest: "{{ rest_private_dir }}/conf/ga_references_GRCh{{ ensembl_sub_release }}.json" }
+    - { src: "{{ rest_private_dir }}/conf/vcf_config.json.j2", dest: "{{ rest_private_dir }}/conf/vcf_config.json" }
+    - { src: "{{ rest_private_dir }}/conf/vep_plugin_config.txt.j2", dest: "{{ rest_private_dir }}/conf/vep_plugin_config.txt" }
+#  when: release_loaded
+
+- name: Deploying REST configs
+  template: src="{{ item.src }}" dest="{{ item.dest }}" mode=0640
+  with_items:
+    - { src: "{{ rest_private_dir }}/conf/ensembl_rest.conf.j2", dest: "{{ rest_install_dir }}/ensembl-rest/configurations/production/ensembl_rest.conf" }
+    - { src: "{{ rest_private_dir }}/conf/ensrest.psgi.j2", dest: "{{ rest_install_dir }}/ensembl-rest/configurations/production/ensrest.psgi" }
+    - { src: "{{ rest_private_dir }}/conf/ga_references.json.j2", dest: "{{ ga4gh_reference_config }}" }
+    - { src: "{{ rest_private_dir }}/conf/vcf_config.json.j2", dest: "{{ vcf_config }}" }
+    - { src: "{{ rest_private_dir }}/conf/vep_plugin_config.txt.j2", dest: "{{ vep_plugin_config }}" }
+#  when: release_loaded
+
+- name: Copy non-templated REST config files
+  copy: src="{{ item.src }}" dest="{{ item.dest }}" mode=0640
+  with_items:
+    - { src: "{{ rest_private_dir }}/conf/ga_vcf_config_GRCh{{ ensembl_sub_release }}.json", dest: "{{ ga4gh_config }}" }
+
+- debug:
+    msg: "vep_cache_dir: {{ vep_cache_dir }}"
+#  when: release_loaded

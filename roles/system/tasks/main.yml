@@ -1,0 +1,11 @@
+- name: Install common packages
+  action: apt pkg={{item}} state=installed
+  with_items:
+       - unzip
+       - git
+       - build-essential
+       - zlib1g-dev
+       - emacs24
+       - libmysqlclient-dev
+       - libxml2-dev
+       - libexpat1-dev

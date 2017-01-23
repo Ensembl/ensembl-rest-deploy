@@ -1,0 +1,36 @@
+- name: Show groups
+  command: /usr/bin/groups
+  register: groups_list
+
+- debug: var=groups_list
+
+- name: Stat the data directories
+  stat: path="{{ item }}" get_checksum=False get_md5=False
+  with_items:
+    - "{{ data_root }}"
+    - "{{ vep_cache_dir }}"
+    - "{{ vep_plugin_dir }}"
+    - "{{ vep_plugin_data_dir }}"
+    - "{{ genotypes_dir }}"
+  register: release_dirs
+
+- name: Ensure the data directories exist
+  fail: msg="Directory {{ item.item }} doesn't exist"
+  when:
+    - not item | skipped
+    - item.stat.exists == false
+  with_items: "{{ release_dirs.results }}"
+
+- name: Stat the datafiles
+  stat:  path="{{ item }}" get_checksum=False get_md5=False
+  with_items:
+    - "{{ homo_sapiens_fasta }}"
+    - "{{ eqtl_file }}"
+  register: release_datafiles
+
+- name: Ensure the datafiles exist
+  fail: msg="Datafile {{ item.item }} doesn't exist"
+  when:
+    - not item | skipped
+    - item.stat.exists == false
+  with_items: "{{ release_datafiles.results }}"

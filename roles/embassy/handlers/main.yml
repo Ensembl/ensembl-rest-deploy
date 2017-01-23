@@ -1,0 +1,8 @@
+- name: Restart-Dnsmasq
+  service: name=dnsmasq state=restarted
+
+- name: Start-Dnsmasq
+  service: name=dnsmasq state=started
+
+- name: Stop-Dnsmasq
+  service: name=dnsmasq state=stopped

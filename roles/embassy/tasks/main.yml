@@ -1,0 +1,53 @@
+- name: Install package for Embassy mount pounts
+  action: apt pkg={{item}} state=installed
+  with_items:
+       - dnsmasq
+       - nfs-common
+  register: dnsmasq_installed
+
+- name: Create nfs gid
+  group: name=nfs gid=1264 state=present
+  register: nfs_group_created
+  
+- name: Put '{{ rest_user }}' user in nfs group
+  user: name="{{ rest_user }}" groups=nfs append=yes
+  when: nfs_group_created
+  
+- name: Ensure network interfaces are all configured
+  lineinfile: dest="/etc/network/interfaces.d/50-cloud-init.cfg" line="auto {{ item }}"
+  with_items:
+    - "{{ ansible_interfaces | map('replace', '-','_') | list | difference(['lo']) }}"
+  register: iface_cfg_1
+
+- name: Ensure network interfaces are all configured
+  lineinfile: dest="/etc/network/interfaces.d/50-cloud-init.cfg" line="iface {{ item }} inet dhcp"
+  with_items:
+    - "{{ ansible_interfaces | map('replace', '-','_') | list | difference(['lo']) }}"
+  register: iface_cfg_2
+
+- name: Bring up remaining interfaces
+  command: "sudo ifup {{ item }}"
+  with_items:
+    - "{{ ansible_interfaces | map('replace', '-','_') | list | difference(['lo']) }}"
+  when: iface_cfg_1 and iface_cfg_2
+  register: iface_cfg
+
+- name: Configure dnsmasq
+  lineinfile: dest="{{ item.file }}" line="{{ item.line }}"
+  with_items:
+    - { file: "/etc/dnsmasq.conf", line: "server=/em-isi-3107.ebi.ac.uk/10.35.107.201" }
+    - { file: "/etc/dnsmasq.conf", line: "server=8.8.8.8" }
+    - { file: "/etc/resolv.conf", line: "nameserver 127.0.0.1" }
+  when: dnsmasq_installed and iface_cfg
+  notify: Restart-Dnsmasq
+  register: dnsmasq_configured
+
+- meta: flush_handlers
+  when: dnsmasq_configured
+
+- name: Mount shared data
+  mount: name="{{ item.path }}" src="{{ item.src }}" fstype="{{ item.fstype }}" opts="{{ item.opts }}" state=mounted
+  with_items:
+    - { path: "/mnt/data", src: "192.168.0.60:/mnt/data/grch38", fstype: "nfs", opts: "soft,tcp,rsize=8192,wsize=8192,noexec,nosuid" }
+    - { path: "/mnt/shared", src: "em-isi-3107.ebi.ac.uk:/ifs/Swift/swift-ensembl", fstype: "nfs", opts: "rw,soft,tcp,rsize=8192,wsize=8192,noexec,nosuid,noatime" }
+  when: dnsmasq_configured
