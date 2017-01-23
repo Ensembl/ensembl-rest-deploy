@@ -44,7 +44,7 @@ Where you have your private key on the rest.ensembl.org host is up to you.
 
 ## Configure deployment
 
-
+In the ensembl-rest_private repository you'll find a release.yml file under each set of configurations. This needs to be set with the release number and locations for files on the deployment environment. Once configured, ensembl-rest_private should branched (not not already) for that release and pushed to github.
 
 ## Running Ansible
 
