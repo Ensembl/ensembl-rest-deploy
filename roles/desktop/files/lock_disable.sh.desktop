@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Exec=/home/lock_disable.sh
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
+Name=LockScreen Disabled
+Comment=Disable the lock screen
+EOF

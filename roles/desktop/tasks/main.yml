@@ -1,0 +1,95 @@
+# Add google chrome ppa
+- apt_repository:
+    repo: deb http://dl.google.com/linux/chrome/deb/ stable main
+    state: present
+    filename: 'google-chrome'
+  register: chrome_ppa
+
+# Add Mate desktop PPA
+- apt_repository:
+    repo: 'ppa:ubuntu-mate-dev/xenial-mate'
+  register: mate_ppa
+
+- name: Pass options to dpkg on run
+  apt:
+    upgrade: dist
+    update_cache: yes
+  when: chrome_ppa and mate_ppa
+  register: dist_upgraded
+
+- name: Set MySQL root password before installing
+  debconf: name='mysql-server' question='mysql-server/root_password' value='ensembl' vtype='password'
+  register: mysql_passwd_set
+  
+- name: Confirm MySQL root password before installing
+  debconf: name='mysql-server' question='mysql-server/root_password_again' value='ensembl' vtype='password'
+  register: mysql_passwd_set_again
+
+- name: Install common packages
+  action: apt pkg={{item}} state=installed
+  with_items:
+       - unzip
+       - git
+       - build-essential
+       - zlib1g-dev
+       - emacs24
+       - libmysqlclient-dev
+       - libxml2-dev
+       - libexpat1-dev
+       - libdbi-perl
+       - libdbd-mysql
+       - libdbd-mysql-perl
+       - sqlite3
+       - libmysqlclient-dev
+       - mysql-server
+       - emacs24
+       - vim
+       - chromium-browser
+       - ubuntu-mate-core
+       - google-chrome-stable
+  when: dist_upgraded and mysql_passwd_set and mysql_passwd_set_again
+  register: desktop_pkgs_installed
+
+- mysql_user:
+    login_user: root
+    login_password: ensembl
+    name: travis
+    priv: '*.*:ALL'
+    state: present
+  when: desktop_pkgs_installed
+
+- name: Configure bashrc environment
+  lineinfile: dest="{{ homedir }}/.bashrc" line="{{ item }}"
+  with_items:
+    - "# This MUST be set for LWP::Simple to retrieve cache files back from the Ensembl FTP site"
+    - "export FTP_PASSIVE=1"
+  become_user: "{{ user | default('ubuntu') }}"
+
+- name: restore bind cfg symlink
+  file: dest="{{ item.dest }}" src="{{ item.src }}" state=link mode=0755 force=yes
+  with_items:
+    - { dest: "{{ homedir }}/Desktop/VEP", src: "{{ rest_install_dir }}/ensembl/VEP" }
+    - { dest: "{{ homedir }}/Desktop/ensembl-api-folder", src: "{{ rest_install_dir }}/ensembl/ensembl-api-folder" }
+
+- name: Install the e! background
+  copy: src={{role_path}}/files/ebang-1440-900.png dest=/usr/share/backgrounds/warty-final-ubuntu.png owner=root group=root mode=0644
+
+- name: create auto-login config directory
+  file: path="/etc/lightdm/lightdm.conf.d" state=directory mode=0755 force=yes
+  register: lightdm_dir_made
+  
+- name: Set auto-login ensembl user
+  lineinfile: dest="/etc/lightdm/lightdm.conf.d/50-login.conf" line="{{ item }}"
+  with_items:
+    - "[SeatDefaults]"
+    - "autologin-user=ensembl"
+  when: lightdm_dir_made
+
+- name: Disable screen locking
+  copy: src="{{ item.src }}" dest="{{ item.dest }}" owner="{{ rest_user }}" mode=0755
+  with_items:
+    - { src: "{{role_path}}/files/lock_disable.sh", dest: "/home/lock_disable.sh" }
+    - { src: "{{role_path}}/files/lock_disable.sh.desktop", dest: "/etc/xdg/autostart/lock_disable.sh.desktop" }
+
+- name: Remove Amazon search results icon
+  file: path=/usr/share/applications/ubuntu-amazon-default.desktop state=absent force=yes

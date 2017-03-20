@@ -1,0 +1,14 @@
+---
+- hosts: all
+  sudo: True
+  vars_files:
+    - vars/main.yml
+
+  environment:
+    HTSLIB_DIR: "{{ rest_install_dir}}/htslib"
+
+  roles:
+    - { role: system, when: install_system is defined and install_system }
+    - { role: ansible-perlbrew, perlbrew_user: "{{ rest_user }}", perl_version: perl-5.14.3, perlbrew_as: perl-5.14.3 }
+    - { role: rest, become: false }
+    - { role: desktop, become: false }
