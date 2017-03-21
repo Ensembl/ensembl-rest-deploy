@@ -100,10 +100,6 @@
       autologin-user=ensembl
   when: lightdm_dir_made
 
-- name: Create ping symlink
-  blockinfile:
-    dest: 
-
 - name: Disable screen locking
   copy: src="{{ item.src }}" dest="{{ item.dest }}" owner="{{ ensembl_user }}" mode=0755
   with_items:
