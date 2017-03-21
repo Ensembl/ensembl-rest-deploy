@@ -10,6 +10,5 @@
   roles:
     - { role: system, when: install_system is defined and install_system }
     - { role: ansible-perlbrew, perlbrew_user: "{{ ensembl_user }}", perl_version: perl-5.14.3, perlbrew_as: perl-5.14.3 }
-    - { role: rest, become: false }
     - { role: desktop }
     - { role: chrome }

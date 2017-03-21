@@ -1,0 +1,76 @@
+- name: Create Ensembl install directory
+  file: path="{{ item }}" state=directory mode=0755 owner="{{ ensembl_user }}" group="{{ ensembl_group }}"
+  with_items:
+    - "{{ ensembl_install_dir }}"
+    - "{{ logdir }}"
+  register: ensembl_dir_exists
+
+- name: Install Ensembl repos
+  git: repo="{{ item.repo }}" dest="{{ ensembl_install_dir }}/{{ item.dir }}" version="{{ item.version | default(ensembl_repo_version) }}" clone=yes
+  with_items:
+       - { repo: 'https://github.com/Ensembl/ensembl-test.git', dir: ensembl-test }
+       - { repo: 'https://github.com/Ensembl/ensembl.git', dir: ensembl }
+       - { repo: 'https://github.com/Ensembl/ensembl-compara.git', dir: ensembl-compara }
+       - { repo: 'https://github.com/Ensembl/ensembl-variation.git', dir: ensembl-variation }
+       - { repo: 'https://github.com/Ensembl/ensembl-vep.git', dir: ensembl-vep }
+       - { repo: 'https://github.com/Ensembl/VEP_plugins.git', dir: VEP_plugins }
+       - { repo: 'https://github.com/Ensembl/ensembl-funcgen.git', dir: ensembl-funcgen }
+       - { repo: 'https://github.com/Ensembl/ensembl-io.git', dir: ensembl-io }
+       - { repo: 'https://github.com/bioperl/bioperl-live.git', dir: bioperl-live,  version: bioperl-release-1-6-1 }
+       - { repo: 'https://github.com/samtools/htslib.git', dir: htslib, version: 'master' }
+  when: ensembl_dir_exists
+  register: repos_exist
+
+- name: Configure bash environment
+  lineinfile: dest="{{ homedir }}/.bashrc" line="{{ item }}"
+  with_items:
+       - source ~/perl5/perlbrew/etc/bashrc
+       - perlbrew switch perl-5.14.3
+       - export HTSLIB_DIR={{ ensembl_install_dir}}/htslib
+       - export PERL5LIB=$PERL5LIB:{{ ensembl_install_dir }}/ensembl-compara/modules:{{ ensembl_install_dir }}/ensembl-funcgen/modules:{{ ensembl_install_dir }}/ensembl-hdf5/modules:{{ ensembl_install_dir }}/ensembl-io/modules:{{ ensembl_install_dir }}/ensembl/modules:{{ ensembl_install_dir }}/ensembl-test/modules:{{ ensembl_install_dir }}/ensembl-variation/modules:{{ ensembl_install_dir }}/ensembl-vep/modules:{{ ensembl_install_dir }}/ensembl-rest/lib:{{ ensembl_install_dir }}/ensembl-git-tools/lib:{{ ensembl_install_dir }}/ensembl-hdf5/modules:{{ ensembl_install_dir }}/bioperl-live
+       - export PATH=$PATH:{{ ensembl_install_dir }}/ensembl-git-tools/bin:{{ ensembl_install_dir }}/ensembl-git-tools/advanced_bin:{{ ensembl_install_dir }}/ensembl-variation/C_code
+  when: repos_exist
+  register: paths_set
+
+- name: Configure bash profile
+  lineinfile: dest="{{ homedir }}/.profile" line="{{ item }}"
+  with_items:
+       - source ~/perl5/perlbrew/etc/bashrc
+       - perlbrew switch perl-5.14.3
+       - export HTSLIB_DIR={{ ensembl_install_dir}}/htslib
+       - export PERL5LIB=$PERL5LIB:{{ ensembl_install_dir }}/ensembl-compara/modules:{{ ensembl_install_dir }}/ensembl-funcgen/modules:{{ ensembl_install_dir }}/ensembl-hdf5/modules:{{ ensembl_install_dir }}/ensembl-io/modules:{{ ensembl_install_dir }}/ensembl/modules:{{ ensembl_install_dir }}/ensembl-test/modules:{{ ensembl_install_dir }}/ensembl-variation/modules:{{ ensembl_install_dir }}/ensembl-vep/modules:{{ ensembl_install_dir }}/ensembl-rest/lib:{{ ensembl_install_dir }}/ensembl-git-tools/lib:{{ ensembl_install_dir }}/ensembl-hdf5/modules:{{ ensembl_install_dir }}/bioperl-live
+       - export PATH=$PATH:{{ ensembl_install_dir }}/ensembl-git-tools/bin:{{ ensembl_install_dir }}/ensembl-git-tools/advanced_bin:{{ ensembl_install_dir }}/ensembl-variation/C_code
+  when: repos_exist
+
+- name: Build HTSLIB
+  shell: "make"
+  args:
+    chdir: "{{ ensembl_install_dir }}/htslib"
+    creates: libhts.so
+  when: repos_exist
+  register: htslib_built
+
+- name: Build variation C progs
+  shell: "make && make install"
+  args:
+    chdir: "{{ ensembl_install_dir }}/ensembl-variation/C_code"
+    creates: ../calc_genotypes
+  when: htslib_built and paths_set
+
+- name: Test for cpanm
+  shell: perl -MApp::cpanminus -e1
+  register: cpanm_installed
+  ignore_errors: true
+
+- name:  Install CPANm
+  shell: curl -L http://cpanmin.us | perl - App::cpanminus
+  when:  cpanm_installed|failed
+  register: cpanm_installed
+
+- name: Install repo cpan dependencies
+  command: "sudo -iu {{ ensembl_user }} cpanm -v --installdeps --with-recommends --notest --cpanfile={{ ensembl_install_dir }}/{{ item }}/cpanfile ."
+  args:
+    chdir="{{ ensembl_install_dir }}/{{ item }}"
+  with_items:
+       - ensembl
+  when: repos_exist and cpanm_installed
