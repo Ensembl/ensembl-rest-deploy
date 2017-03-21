@@ -39,10 +39,16 @@
        - mysql-server
        - emacs24
        - vim
+       - python-gnomekeyring
        - chromium-browser
        - ubuntu-mate-core
   when: dist_upgraded and mysql_passwd_set and mysql_passwd_set_again
   register: desktop_pkgs_installed
+
+- name: Clear the gnome keyring so no popup occurs
+  shell: python -c "import gnomekeyring;gnomekeyring.change_password_sync('login', 'ensembl', '');"
+  become: true
+  become_user: "{{ ensembl_user }}"
 
 - mysql_user:
     login_user: root
