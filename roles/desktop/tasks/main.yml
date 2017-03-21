@@ -49,6 +49,7 @@
   shell: python -c "import gnomekeyring;gnomekeyring.change_password_sync('login', 'ensembl', '');"
   become: true
   become_user: "{{ ensembl_user }}"
+  ignore_errors: true
 
 - mysql_user:
     login_user: root
