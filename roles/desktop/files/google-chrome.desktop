@@ -6,7 +6,7 @@ GenericName=Web Browser
 GenericName[en_GB]=Web Browser
 Comment=Access the Internet
 Comment[en_GB]=
-Exec=/opt/google/chrome/google-chrome --disable-gpu --no-first-run --no-default-browser-check http://www.ensembl.org/info/docs/api/index.html
+Exec=/opt/google/chrome/google-chrome --disable-gpu --no-first-run --no-default-browser-check --password-store=basic http://www.ensembl.org/info/docs/api/index.html
 Terminal=false
 Icon=google-chrome
 Type=Application
