@@ -1,0 +1,29 @@
+
+[Desktop Entry]
+Version=1.0
+Name=Google Chrome
+GenericName=Web Browser
+GenericName[en_GB]=Web Browser
+Comment=Access the Internet
+Comment[en_GB]=
+Exec=/opt/google/chrome/google-chrome --disable-gpu --no-first-run --no-default-browser-check http://www.ensembl.org/info/docs/api/index.html
+Terminal=false
+Icon=google-chrome
+Type=Application
+Categories=Network;WebBrowser;
+MimeType=text/html;text/xml;application/xhtml_xml;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;
+X-Ayatana-Desktop-Shortcuts=NewWindow;NewIncognito
+
+Name[en_GB]=Ensembl Docs
+
+[NewWindow Shortcut Group]
+Name=New Window
+Name[en_GB]=New Window
+Exec=/opt/google/chrome/google-chrome
+TargetEnvironment=Unity
+
+[NewIncognito Shortcut Group]
+Name=New Incognito Window
+Name[en_GB]=New Incognito window
+Exec=/opt/google/chrome/google-chrome --incognito
+TargetEnvironment=Unity

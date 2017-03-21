@@ -52,6 +52,14 @@
     state: present
   when: desktop_pkgs_installed
 
+- name: Install Ensembl repos
+  git: repo="{{ item.repo }}" dest="{{ rest_install_dir }}/{{ item.dir }}" version="{{ item.version | default(ensembl_repo_version) }}" clone=yes
+  with_items:
+       - { repo: 'https://github.com/Ensembl/ensembl-tools.git', dir: ensembl-test }
+       - { repo: 'https://github.com/Ensembl/ensembl-git-tools.git', dir: ensembl-test, version: 'master' }
+       - { repo: 'https://github.com/Ensembl/ensembl-hive.git', dir: ensembl-test, version: 'master' }
+  register: repos_exist
+
 - name: Configure bashrc environment
   lineinfile: dest="{{ homedir }}/.bashrc" line="{{ item }}"
   with_items:
@@ -62,28 +70,47 @@
 - name: restore bind cfg symlink
   file: dest="{{ item.dest }}" src="{{ item.src }}" state=link mode=0755 force=yes
   with_items:
-    - { dest: "{{ homedir }}/Desktop/VEP", src: "{{ ensembl_install_dir }}/ensembl/VEP" }
-    - { dest: "{{ homedir }}/Desktop/ensembl-api-folder", src: "{{ ensembl_install_dir }}/ensembl/ensembl-api-folder" }
+    - { dest: "{{ homedir }}/VEP", src: "{{ ensembl_install_dir }}/ensembl-tools/scripts/variant_effect_predictor/" }
+    - { dest: "{{ homedir }}/Desktop/ensembl-api-folder", src: "{{ ensembl_install_dir }}/" }
+    - { dest: "{{ homedir }}/verify_installation", src: "{{ ensembl_install_dir }}/ensembl/misc-scripts/ping_ensembl.pl" }
 
 - name: Install the e! background
   copy: src={{role_path}}/files/ebang-1440-900.png dest=/usr/share/backgrounds/warty-final-ubuntu.png owner=root group=root mode=0644
+
+- name: Fix locale for gnome-terminal
+  shell: "{{ item }}"
+  with_items:
+    - "locale-gen"
+    - 'localectl set-locale LANG="en_US.UTF-8"'
+  become: true
+  become_user: root
 
 - name: create auto-login config directory
   file: path="/etc/lightdm/lightdm.conf.d" state=directory mode=0755 force=yes
   register: lightdm_dir_made
   
 - name: Set auto-login ensembl user
-  blockinfile: path="/etc/lightdm/lightdm.conf.d/50-login.conf" create=yes owner=root mode=0644
+  blockinfile:
+    dest: "/etc/lightdm/lightdm.conf.d/50-login.conf"
+    create: yes
+    owner: root
+    mode: 0644
     block: |
       [SeatDefaults]
       autologin-user=ensembl
   when: lightdm_dir_made
+
+- name: Create ping symlink
+  blockinfile:
+    dest: 
 
 - name: Disable screen locking
   copy: src="{{ item.src }}" dest="{{ item.dest }}" owner="{{ ensembl_user }}" mode=0755
   with_items:
     - { src: "{{role_path}}/files/lock_disable.sh", dest: "/home/lock_disable.sh" }
     - { src: "{{role_path}}/files/lock_disable.sh.desktop", dest: "/etc/xdg/autostart/lock_disable.sh.desktop" }
+    - { src: "{{role_path}}/google-chrome.desktop", dest: "{{ homedir }}/Desktop/google-chrome.desktop" }
+    - { src: "{{role_path}}/VEP.desktop", dest: "{{ homedir }}/Desktop/VEP.desktop" }
 
 - name: Remove Amazon search results icon
   file: path=/usr/share/applications/ubuntu-amazon-default.desktop state=absent force=yes
