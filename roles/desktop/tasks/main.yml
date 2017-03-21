@@ -1,12 +1,6 @@
-# Add google chrome ppa
-- apt_repository:
-    repo: deb http://dl.google.com/linux/chrome/deb/ stable main
-    state: present
-    filename: 'google-chrome'
-  register: chrome_ppa
-
 # Add Mate desktop PPA
-- apt_repository:
+- name: Add Mate apt repo
+  apt_repository:
     repo: 'ppa:ubuntu-mate-dev/xenial-mate'
   register: mate_ppa
 
@@ -25,7 +19,7 @@
   debconf: name='mysql-server' question='mysql-server/root_password_again' value='ensembl' vtype='password'
   register: mysql_passwd_set_again
 
-- name: Install common packages
+- name: Install common desktop packages
   action: apt pkg={{item}} state=installed
   with_items:
        - unzip
@@ -46,7 +40,6 @@
        - vim
        - chromium-browser
        - ubuntu-mate-core
-       - google-chrome-stable
   when: dist_upgraded and mysql_passwd_set and mysql_passwd_set_again
   register: desktop_pkgs_installed
 
