@@ -12,11 +12,11 @@
   register: dist_upgraded
 
 - name: Set MySQL root password before installing
-  debconf: name='mysql-server' question='mysql-server/root_password' value='ensembl' vtype='password'
+  debconf: name='mysql-server-5.7' question='mysql-server/root_password' value='ensembl' vtype='password'
   register: mysql_passwd_set
   
 - name: Confirm MySQL root password before installing
-  debconf: name='mysql-server' question='mysql-server/root_password_again' value='ensembl' vtype='password'
+  debconf: name='mysql-server-5.7' question='mysql-server/root_password_again' value='ensembl' vtype='password'
   register: mysql_passwd_set_again
 
 - name: Install common desktop packages
@@ -57,7 +57,7 @@
   with_items:
     - "# This MUST be set for LWP::Simple to retrieve cache files back from the Ensembl FTP site"
     - "export FTP_PASSIVE=1"
-  become_user: "{{ user | default('ubuntu') }}"
+  become_user: "{{ ensembl_user }}"
 
 - name: restore bind cfg symlink
   file: dest="{{ item.dest }}" src="{{ item.src }}" state=link mode=0755 force=yes
@@ -73,10 +73,10 @@
   register: lightdm_dir_made
   
 - name: Set auto-login ensembl user
-  lineinfile: dest="/etc/lightdm/lightdm.conf.d/50-login.conf" line="{{ item }}"
-  with_items:
-    - "[SeatDefaults]"
-    - "autologin-user=ensembl"
+  blockinfile: path="/etc/lightdm/lightdm.conf.d/50-login.conf" create=yes owner=root mode=0644
+    block: |
+      [SeatDefaults]
+      autologin-user=ensembl
   when: lightdm_dir_made
 
 - name: Disable screen locking
