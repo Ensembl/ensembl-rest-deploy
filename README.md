@@ -63,12 +63,12 @@ You'll need at least Ansible 2.1 running on your local machine. Virtualenv is a 
 
 Build without installing the system packages:
 
-  ansible-playbook -e "rest_private_dir=$REPO_HOME/ensembl-rest_private/rest.ensembl.org" -i "192.168.0.141," playbook.yml
+  ansible-playbook -e "rest_private_dir=$REPO_HOME/ensembl-rest_private/rest.ensembl.org ensembl_repo_version=release/87" -i "192.168.0.141," playbook.yml
 
 Build with installing the system packages:
 
-  ansible-playbook -e "rest_private_dir=$REPO_HOME/ensembl-rest_private/rest.ensembl.org install_system=True" -i "192.168.0.141," playbook.yml
+  ansible-playbook -e "rest_private_dir=$REPO_HOME/ensembl-rest_private/rest.ensembl.org ensembl_repo_version=release/87 install_system=True" -i "192.168.0.141," playbook.yml
 
 Build with installing the system packages and configuring the Embassy OpenStack environment:
 
-  ansible-playbook -e "rest_private_dir=$REPO_HOME/ensembl-rest_private/rest.ensembl.org install_system=True embassy_config=True" -i "192.168.0.141," playbook.yml
+  ansible-playbook -e "rest_private_dir=$REPO_HOME/ensembl-rest_private/rest.ensembl.org ensembl_repo_version=release/87 install_system=True embassy_config=True" -i "192.168.0.141," playbook.yml
