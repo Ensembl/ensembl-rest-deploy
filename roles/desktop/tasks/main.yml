@@ -33,6 +33,7 @@
        - libdbi-perl
        - libdbd-mysql
        - libdbd-mysql-perl
+       - python-mysqldb
        - sqlite3
        - libmysqlclient-dev
        - mysql-server
