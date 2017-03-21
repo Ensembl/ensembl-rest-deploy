@@ -53,7 +53,7 @@
   when: desktop_pkgs_installed
 
 - name: Install Ensembl repos
-  git: repo="{{ item.repo }}" dest="{{ rest_install_dir }}/{{ item.dir }}" version="{{ item.version | default(ensembl_repo_version) }}" clone=yes
+  git: repo="{{ item.repo }}" dest="{{ ensembl_install_dir }}/{{ item.dir }}" version="{{ item.version | default(ensembl_repo_version) }}" clone=yes
   with_items:
        - { repo: 'https://github.com/Ensembl/ensembl-tools.git', dir: ensembl-test }
        - { repo: 'https://github.com/Ensembl/ensembl-git-tools.git', dir: ensembl-test, version: 'master' }
