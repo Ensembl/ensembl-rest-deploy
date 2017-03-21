@@ -4,11 +4,11 @@
     repo: 'ppa:ubuntu-mate-dev/xenial-mate'
   register: mate_ppa
 
-- name: Pass options to dpkg on run
+- name: Refresh the apt cache
   apt:
     upgrade: dist
     update_cache: yes
-  when: chrome_ppa and mate_ppa
+  when: mate_ppa
   register: dist_upgraded
 
 - name: Set MySQL root password before installing
