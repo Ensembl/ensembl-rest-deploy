@@ -9,8 +9,8 @@
   group: name=nfs gid=1264 state=present
   register: nfs_group_created
   
-- name: Put '{{ rest_user }}' user in nfs group
-  user: name="{{ rest_user }}" groups=nfs append=yes
+- name: Put '{{ ensembl_user }}' user in nfs group
+  user: name="{{ ensembl_user }}" groups=nfs append=yes
   when: nfs_group_created
   
 - name: Ensure network interfaces are all configured

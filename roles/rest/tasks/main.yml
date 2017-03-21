@@ -1,12 +1,12 @@
 - name: Create REST install directory
-  file: path="{{ item }}" state=directory mode=0755 owner="{{ rest_user }}" group="{{ rest_group }}"
+  file: path="{{ item }}" state=directory mode=0755 owner="{{ ensembl_user }}" group="{{ ensembl_group }}"
   with_items:
-    - "{{ rest_install_dir }}"
+    - "{{ ensembl_install_dir }}"
     - "{{ logdir }}"
   register: rest_dir_exists
 
 - name: Install Ensembl repos
-  git: repo="{{ item.repo }}" dest="{{ rest_install_dir }}/{{ item.dir }}" version="{{ item.version | default(ensembl_repo_version) }}" clone=yes
+  git: repo="{{ item.repo }}" dest="{{ ensembl_install_dir }}/{{ item.dir }}" version="{{ item.version | default(ensembl_repo_version) }}" clone=yes
   with_items:
        - { repo: 'https://github.com/Ensembl/ensembl-test.git', dir: ensembl-test }
        - { repo: 'https://github.com/Ensembl/ensembl-rest.git', dir: ensembl-rest, version: 'master' }
@@ -28,9 +28,9 @@
   with_items:
        - source ~/perl5/perlbrew/etc/bashrc
        - perlbrew switch perl-5.14.3
-       - export HTSLIB_DIR={{ rest_install_dir}}/htslib
-       - export PERL5LIB=$PERL5LIB:{{ rest_install_dir }}/ensembl-compara/modules:{{ rest_install_dir }}/ensembl-funcgen/modules:{{ rest_install_dir }}/ensembl-hdf5/modules:{{ rest_install_dir }}/ensembl-io/modules:{{ rest_install_dir }}/ensembl/modules:{{ rest_install_dir }}/ensembl-test/modules:{{ rest_install_dir }}/ensembl-variation/modules:{{ rest_install_dir }}/ensembl-vep/modules:{{ rest_install_dir }}/ensembl-rest/lib:{{ rest_install_dir }}/ensembl-git-tools/lib:{{ rest_install_dir }}/ensembl-hdf5/modules:{{ rest_install_dir }}/bioperl-live
-       - export PATH=$PATH:{{ rest_install_dir }}/ensembl-git-tools/bin:{{ rest_install_dir }}/ensembl-git-tools/advanced_bin:{{ rest_install_dir }}/ensembl-variation/C_code
+       - export HTSLIB_DIR={{ ensembl_install_dir}}/htslib
+       - export PERL5LIB=$PERL5LIB:{{ ensembl_install_dir }}/ensembl-compara/modules:{{ ensembl_install_dir }}/ensembl-funcgen/modules:{{ ensembl_install_dir }}/ensembl-hdf5/modules:{{ ensembl_install_dir }}/ensembl-io/modules:{{ ensembl_install_dir }}/ensembl/modules:{{ ensembl_install_dir }}/ensembl-test/modules:{{ ensembl_install_dir }}/ensembl-variation/modules:{{ ensembl_install_dir }}/ensembl-vep/modules:{{ ensembl_install_dir }}/ensembl-rest/lib:{{ ensembl_install_dir }}/ensembl-git-tools/lib:{{ ensembl_install_dir }}/ensembl-hdf5/modules:{{ ensembl_install_dir }}/bioperl-live
+       - export PATH=$PATH:{{ ensembl_install_dir }}/ensembl-git-tools/bin:{{ ensembl_install_dir }}/ensembl-git-tools/advanced_bin:{{ ensembl_install_dir }}/ensembl-variation/C_code
   when: repos_exist
   register: paths_set
 
@@ -39,15 +39,15 @@
   with_items:
        - source ~/perl5/perlbrew/etc/bashrc
        - perlbrew switch perl-5.14.3
-       - export HTSLIB_DIR={{ rest_install_dir}}/htslib
-       - export PERL5LIB=$PERL5LIB:{{ rest_install_dir }}/ensembl-compara/modules:{{ rest_install_dir }}/ensembl-funcgen/modules:{{ rest_install_dir }}/ensembl-hdf5/modules:{{ rest_install_dir }}/ensembl-io/modules:{{ rest_install_dir }}/ensembl/modules:{{ rest_install_dir }}/ensembl-test/modules:{{ rest_install_dir }}/ensembl-variation/modules:{{ rest_install_dir }}/ensembl-vep/modules:{{ rest_install_dir }}/ensembl-rest/lib:{{ rest_install_dir }}/ensembl-git-tools/lib:{{ rest_install_dir }}/ensembl-hdf5/modules:{{ rest_install_dir }}/bioperl-live
-       - export PATH=$PATH:{{ rest_install_dir }}/ensembl-git-tools/bin:{{ rest_install_dir }}/ensembl-git-tools/advanced_bin:{{ rest_install_dir }}/ensembl-variation/C_code
+       - export HTSLIB_DIR={{ ensembl_install_dir}}/htslib
+       - export PERL5LIB=$PERL5LIB:{{ ensembl_install_dir }}/ensembl-compara/modules:{{ ensembl_install_dir }}/ensembl-funcgen/modules:{{ ensembl_install_dir }}/ensembl-hdf5/modules:{{ ensembl_install_dir }}/ensembl-io/modules:{{ ensembl_install_dir }}/ensembl/modules:{{ ensembl_install_dir }}/ensembl-test/modules:{{ ensembl_install_dir }}/ensembl-variation/modules:{{ ensembl_install_dir }}/ensembl-vep/modules:{{ ensembl_install_dir }}/ensembl-rest/lib:{{ ensembl_install_dir }}/ensembl-git-tools/lib:{{ ensembl_install_dir }}/ensembl-hdf5/modules:{{ ensembl_install_dir }}/bioperl-live
+       - export PATH=$PATH:{{ ensembl_install_dir }}/ensembl-git-tools/bin:{{ ensembl_install_dir }}/ensembl-git-tools/advanced_bin:{{ ensembl_install_dir }}/ensembl-variation/C_code
   when: repos_exist
 
 - name: Build HTSLIB
   shell: "make"
   args:
-    chdir: "{{ rest_install_dir }}/htslib"
+    chdir: "{{ ensembl_install_dir }}/htslib"
     creates: libhts.so
   when: repos_exist
   register: htslib_built
@@ -55,7 +55,7 @@
 - name: Build variation C progs
   shell: "make && make install"
   args:
-    chdir: "{{ rest_install_dir }}/ensembl-variation/C_code"
+    chdir: "{{ ensembl_install_dir }}/ensembl-variation/C_code"
     creates: ../calc_genotypes
   when: htslib_built and paths_set
 
@@ -70,9 +70,9 @@
   register: cpanm_installed
 
 - name: Install repo cpan dependencies
-  command: "sudo -iu {{ rest_user }} cpanm -v --installdeps --with-recommends --notest --cpanfile={{ rest_install_dir }}/{{ item }}/cpanfile ."
+  command: "sudo -iu {{ ensembl_user }} cpanm -v --installdeps --with-recommends --notest --cpanfile={{ ensembl_install_dir }}/{{ item }}/cpanfile ."
   args:
-    chdir="{{ rest_install_dir }}/{{ item }}"
+    chdir="{{ ensembl_install_dir }}/{{ item }}"
   with_items:
        - ensembl
        - ensembl-rest

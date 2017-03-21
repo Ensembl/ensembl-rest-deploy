@@ -46,6 +46,17 @@ Where you have your private key on the rest.ensembl.org host is up to you.
 
 In the ensembl-rest_private repository you'll find a release.yml file under each set of configurations. This needs to be set with the release number and locations for files on the deployment environment. Once configured, ensembl-rest_private should branched (not not already) for that release and pushed to github.
 
+## Configuring facts
+
+There are a number of configurable facts that can be overridden when running the play, these can be seen in vars/main.yml. But briefly, the important ones are:
+
+ensembl_user (default: ensembl)
+ensembl_group (default: ensembl)
+
+To override these, add them to the -e option for ansible-playbook, ie.
+
+  ansible-playbook -e "ensembl_user=ubuntu ..."
+
 ## Running Ansible
 
 You'll need at least Ansible 2.1 running on your local machine. Virtualenv is a great tool for keeping this install separate from your system python. Then to deploy the REST server, pick one of the following commands. Substitute the IP from the VM creation step for the one in the command below.

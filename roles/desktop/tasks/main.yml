@@ -61,8 +61,8 @@
 - name: restore bind cfg symlink
   file: dest="{{ item.dest }}" src="{{ item.src }}" state=link mode=0755 force=yes
   with_items:
-    - { dest: "{{ homedir }}/Desktop/VEP", src: "{{ rest_install_dir }}/ensembl/VEP" }
-    - { dest: "{{ homedir }}/Desktop/ensembl-api-folder", src: "{{ rest_install_dir }}/ensembl/ensembl-api-folder" }
+    - { dest: "{{ homedir }}/Desktop/VEP", src: "{{ ensembl_install_dir }}/ensembl/VEP" }
+    - { dest: "{{ homedir }}/Desktop/ensembl-api-folder", src: "{{ ensembl_install_dir }}/ensembl/ensembl-api-folder" }
 
 - name: Install the e! background
   copy: src={{role_path}}/files/ebang-1440-900.png dest=/usr/share/backgrounds/warty-final-ubuntu.png owner=root group=root mode=0644
@@ -79,7 +79,7 @@
   when: lightdm_dir_made
 
 - name: Disable screen locking
-  copy: src="{{ item.src }}" dest="{{ item.dest }}" owner="{{ rest_user }}" mode=0755
+  copy: src="{{ item.src }}" dest="{{ item.dest }}" owner="{{ ensembl_user }}" mode=0755
   with_items:
     - { src: "{{role_path}}/files/lock_disable.sh", dest: "/home/lock_disable.sh" }
     - { src: "{{role_path}}/files/lock_disable.sh.desktop", dest: "/etc/xdg/autostart/lock_disable.sh.desktop" }

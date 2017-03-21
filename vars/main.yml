@@ -1,6 +1,5 @@
-rest_user: ubuntu
-rest_group: ubuntu
-homedir: /home/ubuntu
+ensembl_user: ensembl
+ensembl_group: ensembl
+homedir: "/home/{{ ensembl_user }}"
 logdir: "{{ homedir }}/log"
-rest_install_dir: /home/ubuntu/src
-ensembl_release: release/87
+ensembl_install_dir: "{{ homedir }}/src"
