@@ -58,6 +58,8 @@
        - { repo: 'https://github.com/Ensembl/ensembl-tools.git', dir: ensembl-test }
        - { repo: 'https://github.com/Ensembl/ensembl-git-tools.git', dir: ensembl-test, version: 'master' }
        - { repo: 'https://github.com/Ensembl/ensembl-hive.git', dir: ensembl-test, version: 'master' }
+  become: true
+  become_user: "{{ ensembl_user }}"
   register: repos_exist
 
 - name: Configure bashrc environment
@@ -100,13 +102,13 @@
       autologin-user=ensembl
   when: lightdm_dir_made
 
-- name: Disable screen locking
+- name: Disable screen locking and make desktop icons
   copy: src="{{ item.src }}" dest="{{ item.dest }}" owner="{{ ensembl_user }}" mode=0755
   with_items:
     - { src: "{{role_path}}/files/lock_disable.sh", dest: "/home/lock_disable.sh" }
     - { src: "{{role_path}}/files/lock_disable.sh.desktop", dest: "/etc/xdg/autostart/lock_disable.sh.desktop" }
-    - { src: "{{role_path}}/google-chrome.desktop", dest: "{{ homedir }}/Desktop/google-chrome.desktop" }
-    - { src: "{{role_path}}/VEP.desktop", dest: "{{ homedir }}/Desktop/VEP.desktop" }
+    - { src: "{{role_path}}/files/google-chrome.desktop", dest: "{{ homedir }}/Desktop/google-chrome.desktop" }
+    - { src: "{{role_path}}/files/VEP.desktop", dest: "{{ homedir }}/Desktop/VEP.desktop" }
 
 - name: Remove Amazon search results icon
   file: path=/usr/share/applications/ubuntu-amazon-default.desktop state=absent force=yes
