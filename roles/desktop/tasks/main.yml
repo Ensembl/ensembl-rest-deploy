@@ -55,9 +55,9 @@
 - name: Install Ensembl repos
   git: repo="{{ item.repo }}" dest="{{ ensembl_install_dir }}/{{ item.dir }}" version="{{ item.version | default(ensembl_repo_version) }}" clone=yes
   with_items:
-       - { repo: 'https://github.com/Ensembl/ensembl-tools.git', dir: ensembl-test }
-       - { repo: 'https://github.com/Ensembl/ensembl-git-tools.git', dir: ensembl-test, version: 'master' }
-       - { repo: 'https://github.com/Ensembl/ensembl-hive.git', dir: ensembl-test, version: 'master' }
+       - { repo: 'https://github.com/Ensembl/ensembl-tools.git', dir: ensembl-tools }
+       - { repo: 'https://github.com/Ensembl/ensembl-git-tools.git', dir: ensembl-git-tools, version: 'master' }
+       - { repo: 'https://github.com/Ensembl/ensembl-hive.git', dir: ensembl-hive, version: 'master' }
   become: true
   become_user: "{{ ensembl_user }}"
   register: repos_exist
