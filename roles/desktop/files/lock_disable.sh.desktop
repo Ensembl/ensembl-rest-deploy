@@ -1,9 +1,12 @@
 [Desktop Entry]
 Type=Application
-Exec=/home/lock_disable.sh
+Exec=/usr/bin/gsettings set org.gnome.desktop.screensaver lock-enabled false
 Hidden=false
-NoDisplay=false
+NoDisplay=true
 X-GNOME-Autostart-enabled=true
 Name=LockScreen Disabled
 Comment=Disable the lock screen
+X-GNOME-Autostart-Phase=Application
+X-GNOME-Autostart-Notify=true
+X-GNOME-Autostart-Delay=30
 EOF

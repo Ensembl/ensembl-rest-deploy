@@ -77,11 +77,11 @@
   become_user: "{{ ensembl_user }}"
 
 - name: Create Desktop directory since user hasnt logged in yet
-  file: path="{{ homedir }}/Desktop" state=directory mode=0755 force=yes
+  file: path="{{ homedir }}/Desktop" state=directory mode=0755 force=yes owner="{{ ensembl_user }}" group="{{ ensembl_group }}"
   register: desktop_dir_created
 
 - name: Create user convenience symlinks
-  file: dest="{{ item.dest }}" src="{{ item.src }}" state=link mode=0755 force=yes
+  file: dest="{{ item.dest }}" src="{{ item.src }}" state=link mode=0755 force=yes owner="{{ ensembl_user }}" group="{{ ensembl_group }}"
   with_items:
     - { dest: "{{ homedir }}/VEP", src: "{{ ensembl_install_dir }}/ensembl-tools/scripts/variant_effect_predictor/" }
     - { dest: "{{ homedir }}/Desktop/ensembl-api-folder", src: "{{ ensembl_install_dir }}/" }
@@ -116,7 +116,7 @@
   when: lightdm_dir_made
 
 - name: Disable screen locking and make desktop icons
-  copy: src="{{ item.src }}" dest="{{ item.dest }}" owner="{{ ensembl_user }}" mode=0755
+  copy: src="{{ item.src }}" dest="{{ item.dest }}" owner="{{ ensembl_user }}" mode=0755 group="{{ ensembl_group }}"
   with_items:
     - { src: "{{role_path}}/files/lock_disable.sh", dest: "/home/lock_disable.sh" }
     - { src: "{{role_path}}/files/lock_disable.sh.desktop", dest: "/etc/xdg/autostart/lock_disable.sh.desktop" }
