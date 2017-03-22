@@ -1,3 +1,0 @@
----
-dependencies:
-    - { role: ansible-perlbrew, perlbrew_user: "{{ ensembl_user }}", perl_version: perl-5.14.3, perlbrew_as: perl-5.14.3 }
