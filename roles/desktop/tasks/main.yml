@@ -76,12 +76,18 @@
     - "export FTP_PASSIVE=1"
   become_user: "{{ ensembl_user }}"
 
-- name: restore bind cfg symlink
+- name: Create Desktop directory since user hasnt logged in yet
+  file: path="{{ homedir }}/Desktop" state=directory mode=0755 force=yes
+  register: desktop_dir_created
+
+- name: Create user convenience symlinks
   file: dest="{{ item.dest }}" src="{{ item.src }}" state=link mode=0755 force=yes
   with_items:
     - { dest: "{{ homedir }}/VEP", src: "{{ ensembl_install_dir }}/ensembl-tools/scripts/variant_effect_predictor/" }
     - { dest: "{{ homedir }}/Desktop/ensembl-api-folder", src: "{{ ensembl_install_dir }}/" }
     - { dest: "{{ homedir }}/verify_installation", src: "{{ ensembl_install_dir }}/ensembl/misc-scripts/ping_ensembl.pl" }
+  ignore_errors: true
+  when: desktop_dir_created
 
 - name: Install the e! background
   copy: src={{role_path}}/files/ebang-1440-900.png dest=/usr/share/backgrounds/warty-final-ubuntu.png owner=root group=root mode=0644
@@ -116,6 +122,7 @@
     - { src: "{{role_path}}/files/lock_disable.sh.desktop", dest: "/etc/xdg/autostart/lock_disable.sh.desktop" }
     - { src: "{{role_path}}/files/google-chrome.desktop", dest: "{{ homedir }}/Desktop/google-chrome.desktop" }
     - { src: "{{role_path}}/files/VEP.desktop", dest: "{{ homedir }}/Desktop/VEP.desktop" }
+  when: desktop_dir_created
 
 - name: Remove Amazon search results icon
   file: path=/usr/share/applications/ubuntu-amazon-default.desktop state=absent force=yes
