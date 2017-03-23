@@ -9,4 +9,3 @@ Comment=Disable the lock screen
 X-GNOME-Autostart-Phase=Application
 X-GNOME-Autostart-Notify=true
 X-GNOME-Autostart-Delay=30
-EOF
