@@ -55,7 +55,9 @@ ensembl_group (default: ensembl)
 
 To override these, add them to the -e option for ansible-playbook, ie.
 
-  ansible-playbook -e "ensembl_user=ubuntu ..."
+```
+ansible-playbook -e "ensembl_user=ubuntu ..."
+```
 
 ## Running Ansible
 
@@ -63,15 +65,20 @@ You'll need at least Ansible 2.1 running on your local machine. Virtualenv is a 
 
 Build without installing the system packages:
 
-  ansible-playbook -e "rest_private_dir=$REPO_HOME/ensembl-rest_private/rest.ensembl.org ensembl_repo_version=release/87" -i "192.168.0.141," playbook.yml
-
+```
+ansible-playbook -e "rest_private_dir=$REPO_HOME/ensembl-rest_private/rest.ensembl.org ensembl_repo_version=release/87" -i "192.168.0.141," playbook.yml
+```
 Build with installing the system packages:
 
-  ansible-playbook -e "rest_private_dir=$REPO_HOME/ensembl-rest_private/rest.ensembl.org ensembl_repo_version=release/87 install_system=True" -i "192.168.0.141," playbook.yml
+```
+ansible-playbook -e "rest_private_dir=$REPO_HOME/ensembl-rest_private/rest.ensembl.org ensembl_repo_version=release/87 install_system=True" -i "192.168.0.141," playbook.yml
+```
 
 Build with installing the system packages and configuring the Embassy OpenStack environment:
 
-  ansible-playbook -e "rest_private_dir=$REPO_HOME/ensembl-rest_private/rest.ensembl.org ensembl_repo_version=release/87 install_system=True embassy_config=True" -i "192.168.0.141," playbook.yml
+```
+ansible-playbook -e "rest_private_dir=$REPO_HOME/ensembl-rest_private/rest.ensembl.org ensembl_repo_version=release/87 install_system=True embassy_config=True" -i "192.168.0.141," playbook.yml
+```
 
 # Building the Ensembl VM
 
@@ -82,25 +89,35 @@ You will need [Packer](https://www.packer.io/), [Vagrant](https://www.vagrantup.
 
 Set the DEPLOY_BASE to the vm/ directory in the ensembl-rest-deploy repo and version
 
-  export DEPLOY_BASE=/some/directory/ensembl-rest-deploy/vm
-  export RELEASE=88
+```
+export DEPLOY_BASE=/some/directory/ensembl-rest-deploy/vm
+export RELEASE=88
+```
 
 Edit the installation script in ensembl-rest-deploy to use the correct version of Ensembl for the VM you're building
 
-  emacs ${DEPLOY_BASE}/ensembl.sh
+```
+emacs ${DEPLOY_BASE}/ensembl.sh
+```
 
 and change the repo variable to the git tag to use for all Ensembl repos, eg.
 
-  REPO=release/88
+```
+REPO=release/88
+```
 
 Then simply run the packer script using the custom configuration from ensembl-rest-deploy:
 
-  packer build -only=virtualbox-iso -var-file=${DEPLOY_BASE}/ensembl.json -var "version=${RELEASE}" -var "custom_script=${DEPLOY_BASE}/ensembl.sh" -var "vagrantfile_template=${DEPLOY_BASE}/vagrantfile-ensembl.tpl" ubuntu.json
+```
+packer build -only=virtualbox-iso -var-file=${DEPLOY_BASE}/ensembl.json -var "version=${RELEASE}" -var "custom_script=${DEPLOY_BASE}/ensembl.sh" -var "vagrantfile_template=${DEPLOY_BASE}/vagrantfile-ensembl.tpl" ubuntu.json
+```
 
 Once the build finishes, add the box to vagrant then start the box.
 
-  vagrant box add ensembl/ensembl box/virtualbox/ensemblvm-${RELEASE}.box
-  vagrant init ensembl/ensembl
-  vagrant up
+```
+vagrant box add ensembl/ensembl box/virtualbox/ensemblvm-${RELEASE}.box
+vagrant init ensembl/ensembl
+vagrant up
+```
 
 To export the VM for distribution, open virtualbox and under File->Export Applicance, follow the prompts and create an OVA. This can be distributed as usual.
