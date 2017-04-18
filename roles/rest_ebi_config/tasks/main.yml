@@ -1,4 +1,4 @@
-# Role: rest_config
+# Role: rest_ebi_config
 
 - name: Create local copy of REST configs
   local_action: template src="{{ item.src }}" dest="{{ item.dest }}" mode=0640
@@ -16,7 +16,7 @@
     - { src: "{{ rest_private_dir }}/conf/ensembl_rest.conf.j2", dest: "{{ ensembl_install_dir }}/ensembl-rest/configurations/production/ensembl_rest.conf" }
     - { src: "{{ rest_private_dir }}/conf/ensrest.psgi.j2", dest: "{{ ensembl_install_dir }}/ensembl-rest/configurations/production/ensrest.psgi" }
     - { src: "{{ rest_private_dir }}/conf/ga_references.json.j2", dest: "{{ ga4gh_reference_config }}" }
-    - { src: "{{ rest_private_dir }}/conf/vcf_config.json.j2", dest: "{{ vcf_config }}" }
+    - { src: "{{ rest_private_dir }}/conf/vcf_config_ebi.json.j2", dest: "{{ vcf_config }}" }
     - { src: "{{ rest_private_dir }}/conf/vep_plugin_config.txt.j2", dest: "{{ vep_plugin_config }}" }
 #  when: release_loaded
 
@@ -31,7 +31,7 @@
     marker: "# {mark} Ansible Perl Paths"
     content: |
     source {{ PERL_RC | default('~/.bashrc') }}
-
+       
 - debug:
     msg: "vep_cache_dir: {{ vep_cache_dir }}"
 #  when: release_loaded

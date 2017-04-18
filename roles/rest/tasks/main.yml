@@ -1,3 +1,5 @@
+# Role: rest
+
 - name: Create REST install directory
   file: path="{{ item }}" state=directory mode=0755 owner="{{ ensembl_user }}" group="{{ ensembl_group }}"
   with_items:
@@ -13,10 +15,70 @@
   when: rest_dir_exists
   register: repos_exist
 
+#    command: "sudo -iu {{ ensembl_user }} cpanm -v --installdeps --with-recommends --notest --cpanfile={{ ensembl_install_dir }}/{{ item }}/cpanfile ."
+
 - name: Install repo cpan dependencies
-  command: "sudo -iu {{ ensembl_user }} cpanm -v --installdeps --with-recommends --notest --cpanfile={{ ensembl_install_dir }}/{{ item }}/cpanfile ."
+  shell: "source {{ PERL_RC | default('~/.bashrc') }} && cpanm -v --installdeps --with-recommends --notest --cpanfile={{ ensembl_install_dir }}/{{ item }}/cpanfile ."
   args:
-    chdir="{{ ensembl_install_dir }}/{{ item }}"
+    chdir: "{{ ensembl_install_dir }}/{{ item }}"
   with_items:
        - ensembl-rest
   when: repos_exist
+
+- name: Determine if HDF5 is installed
+  stat:
+    path: "{{ homedir }}/local/lib/libhdf5.so"
+  register: hdf5_status
+
+- name: Set hdf5 install if lib does not exist
+  set_fact:
+    install_hdf5_from_src: true
+  when: hdf5_status.stat.exists == False and install_hdf5
+
+- name: Download HDF5
+  get_url:
+    url: "https://support.hdfgroup.org/ftp/HDF5/current18/src/hdf5-{{ hdf5_version }}.tar.gz"
+    dest: "{{ ensembl_install_dir }}/hdf5-{{ hdf5_version }}.tar.gz"
+  when: install_hdf5_from_src is defined and install_hdf5_from_src
+
+- name: Expand HDF5
+  unarchive:
+    src: "{{ ensembl_install_dir }}/hdf5-{{ hdf5_version }}.tar.gz"
+    dest: "{{ ensembl_install_dir }}"
+    creates: "{{ ensembl_install_dir }}/hdf5-{{ hdf5_version }}/README.txt"
+    copy: no
+  when: install_hdf5_from_src is defined and install_hdf5_from_src
+
+- name: Build HDF5
+  shell: "source {{ PERL_RC | default('~/.bashrc') }} && {{ item }}"
+  args:
+    chdir: "{{ ensembl_install_dir }}/hdf5-{{ hdf5_version }}"
+  with_items:
+    - ./configure --prefix={{ homedir }}/local
+    - make
+    - make check
+    - make install
+    - make check-install
+  when: install_hdf5_from_src is defined and install_hdf5_from_src
+
+- name: Install Ensembl HDF5 repo
+  git: repo="{{ item.repo }}" dest="{{ ensembl_install_dir }}/{{ item.dir }}" version="{{ item.version | default(ensembl_repo_version) }}" clone=yes
+  with_items:
+       - { repo: 'https://github.com/Ensembl/ensembl-hdf5.git', dir: ensembl-hdf5, version: master }
+
+- name: Tune Ensembl HDF5 makefiles
+  lineinfile:
+    dest: "{{ item.file }}"
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    backrefs: true
+  with_items:
+    - { file: "{{ ensembl_install_dir }}/ensembl-hdf5/c/Makefile", regexp: '^(INC=)$', line: "\\g<1>-I{{ homedir }}/local/include" }
+    - { file: "{{ ensembl_install_dir }}/ensembl-hdf5/c/Makefile", regexp: '^(LIB_PATHS=-L./)$', line: "\\g<1> -L{{ homedir }}/local/lib" }
+    - { file: "{{ ensembl_install_dir }}/ensembl-hdf5/xs/Makefile.PL", regexp: '^(\s+LIBS\s+=>)', line: "\\g<1> ['-L../c -lhdf5_wrapper -L{{ homedir }}/local/lib -lhdf5']," }
+    - { file: "{{ ensembl_install_dir }}/ensembl-hdf5/xs/Makefile.PL", regexp: '^(\s+INC\s+=>)', line: "\\g<1> '-I../c -I{{ homedir }}/local/include'," }
+
+- name: Make Ensembl HDF5
+  shell: "source {{ PERL_RC | default('~/.bashrc') }} && make"
+  args:
+    chdir: "{{ ensembl_install_dir }}/ensembl-hdf5"

@@ -1,5 +1,9 @@
 ensembl_user: ensembl
 ensembl_group: ensembl
-homedir: "/home/{{ ensembl_user }}"
+homedir: "{{ ansible_env.HOME}}"
+#homedir: "/home/{{ ensembl_user }}"
 logdir: "{{ homedir }}/log"
 ensembl_install_dir: "{{ homedir }}/src"
+
+hdf5_version: 1.8.18
+install_hdf5: true

@@ -1,8 +1,14 @@
-- name: Install common system packages
+# role: system
+
+- name: Install common system packages (common)
   action: apt pkg={{item}} state=installed
   with_items:
        - unzip
        - git
+
+- name: Install common system packages (Debian)
+  action: apt pkg={{item}} state=installed
+  with_items:
        - build-essential
        - zlib1g-dev
        - emacs24
@@ -11,3 +17,20 @@
        - libexpat1-dev
        - liblzma-dev
        - libbz2-dev
+  when: ansible_os_family == 'Debian'
+
+# Not yet tested on a RH based system
+- name: Install common system packages (RedHat)
+  action: apt pkg={{item}} state=installed
+  with_items:
+       - gcc
+       - gcc-c++
+       - make
+       - zlib-devel
+       - emacs-24
+       - mysql-devel
+       - libxml2-devel
+       - libexpat1-devel
+       - liblzma-devel
+       - libbz2-devel
+  when: ansible_os_family == 'RedHat'

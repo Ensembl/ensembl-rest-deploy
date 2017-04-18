@@ -5,12 +5,16 @@
     - vars/main.yml
     - "{{ rest_private_dir }}/conf/release.yml"
 
+  variables:
+    - local_perl: true
+
   environment:
     HTSLIB_DIR: "{{ ensembl_install_dir}}/htslib"
 
   roles:
     - { role: system, when: install_system is defined and install_system }
     - { role: embassy, when: embassy_config is defined and embassy_config }
+    - { role: ansible-perlbrew, perlbrew_user: "{{ ensembl_user }}", perl_version: perl-5.14.3, perlbrew_as: perl-5.14.3 }
     - { role: rest, become: false }
     - { role: rest_validate, become: false }
     - { role: rest_config, become: false }
