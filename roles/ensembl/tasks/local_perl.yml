@@ -1,0 +1,24 @@
+---
+# If we're using our own perlbrew installation
+
+- name: Configure bash environment for local perl
+  lineinfile: dest="{{ homedir }}/.bashrc" line="{{ item }}"
+  with_items:
+       - source ~/perl5/perlbrew/etc/bashrc
+       - perlbrew switch perl-5.14.3
+
+- name: Configure bash profile for local perl
+  lineinfile: dest="{{ homedir }}/.profile" line="{{ item }}"
+  with_items:
+       - source ~/perl5/perlbrew/etc/bashrc
+       - perlbrew switch perl-5.14.3
+
+- name: Test for cpanm
+  shell: perl -MApp::cpanminus -e1
+  register: cpanm_installed
+  ignore_errors: true
+
+- name:  Install CPANm
+  shell: curl -L http://cpanmin.us | perl - App::cpanminus
+  when:  cpanm_installed|failed
+  register: cpanm_installed

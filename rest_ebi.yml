@@ -1,0 +1,23 @@
+---
+- hosts: all
+  become: false
+  vars_files:
+    - vars/main.yml
+    - "{{ rest_private_dir }}/conf/release_ebi.yml"
+
+  vars:
+    source_list: ['.bashrc_linuxbrew', '.bashrc_ensembl']
+    PERL_RC: "{{ homedir }}/active_perl_e{{ ensembl_release }}"
+    ebi_perl: true
+
+  environment:
+    HTSLIB_DIR: "{{ ensembl_install_dir}}/htslib"
+    HTTP_PROXY: 'http://hx-wwwcache.ebi.ac.uk:3128'
+    HTTPS_PROXY: 'http://hx-wwwcache.ebi.ac.uk:3128'
+    http_proxy: 'http://hx-wwwcache.ebi.ac.uk:3128'
+    https_proxy: 'http://hx-wwwcache.ebi.ac.uk:3128'
+
+  roles:
+    - { role: rest, become: false }
+#    - { role: rest_validate, become: false }
+#    - { role: rest_ebi_config, become: false }
