@@ -11,7 +11,7 @@
     - "{{ vep_cache_dir }}"
     - "{{ vep_plugin_dir }}"
     - "{{ vep_plugin_data_dir }}"
-    - "{{ genotypes_dir }}"
+    - "{{ human_genotypes_dir }}"
   register: release_dirs
 
 - name: Ensure the data directories exist
