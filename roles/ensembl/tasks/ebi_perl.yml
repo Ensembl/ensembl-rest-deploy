@@ -4,13 +4,15 @@
   blockinfile:
     dest: "{{ PERL_RC }}"
     create: yes
+    marker: "# {mark} EBI PERL CONFIG"
     content: |
-      export SHARE_PATH="/nfs/public/release/ensweb-software/sharedsw/e{{ ensembl_release }}"
-      source "/nfs/public/release/ensweb-software/sharedsw/e{{ ensembl_release }}/.bashrc_linuxbrew"
-      source "/nfs/public/release/ensweb-software/sharedsw/e{{ ensembl_release }}/.bashrc_ensembl"
-      export PATH="{{ homedir }}/perl5_e{{ ensembl_release }}/bin${PATH:+:${PATH}}"
-      export PERL5LIB="{{ homedir }}/perl5_e{{ ensembl_release }}/lib/perl5${PERL5LIB:+:${PERL5LIB}}"
-      export PERL_LOCAL_LIB_ROOT="{{ homedir }}/perl5_e{{ ensembl_release }}${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"
-      export PERL_MB_OPT="--install_base \"{{ homedir }}/perl5_e{{ ensembl_release }}\""
-      export PERL_MM_OPT="INSTALL_BASE={{ homedir }}/perl5_e{{ ensembl_release }}"
+      #export SHARE_PATH="/nfs/public/release/ensweb-software/sharedsw/e{{ ensembl_release }}"
+      #source "/nfs/public/release/ensweb-software/sharedsw/e{{ ensembl_release }}/.bashrc_linuxbrew"
+      #source "/nfs/public/release/ensweb-software/sharedsw/e{{ ensembl_release }}/.bashrc_ensembl"
+      #source {{ homedir }}/perl5/perlbrew/etc/bashrc
+      export PATH="{{ homedir }}/perl5/bin${PATH:+:${PATH}}"
+      export PERL5LIB="{{ homedir }}/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"
+      export PERL_LOCAL_LIB_ROOT="{{ homedir }}/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"
+      export PERL_MB_OPT="--install_base \"{{ homedir }}/perl5\""
+      export PERL_MM_OPT="INSTALL_BASE={{ homedir }}/perl5"
 

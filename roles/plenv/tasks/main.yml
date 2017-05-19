@@ -1,0 +1,35 @@
+# Role: plenv
+
+- set_fact:
+    plenv_dir: "{{ plenv_install_dir | default('~/.plenv') }}"
+
+- name: Clone plenv
+  git: repo="https://github.com/tokuhirom/plenv.git" dest="{{ plenv_dir }}" version="master" clone=yes
+
+- name: Configure shell environment
+  blockinfile:
+    dest: "{{ PERL_RC | default('~/.bashrc') }}"
+    create: yes
+    marker: "# {mark} PLENV config"
+    content: |
+      export PLENV_VERSION={{ perl_version }}
+      export PLENV_ROOT="{{ plenv_dir }}"
+      export PATH="{{ plenv_dir }}/bin:$PATH"
+      #export PATH="{{ plenv_dir }}/bin:{{ plenv_dir }}/plugins/perl-build/bin/:$PATH"
+      eval "$(plenv init -)"
+
+- name: Clone perl-build
+  git: repo="https://github.com/tokuhirom/Perl-Build.git" dest="{{ plenv_dir }}/plugins/perl-build/" version="master" clone=yes
+
+- name: Install {{ perl_version }} (may take some time...)
+  shell: "source {{ PERL_RC | default('~/.bashrc') }} && plenv install {{ perl_version }}"
+  args:
+    creates: "{{ plenv_install_dir }}/versions/{{ perl_version }}"
+
+- name: Install cpanm
+  shell: "source {{ PERL_RC | default('~/.bashrc') }} && plenv install-cpanm"
+
+# Eventually add this to cpanfile for REST
+- name: Ensure Daemon::Control installed
+  shell: "source {{ PERL_RC | default('~/.bashrc') }} && cpanm install Daemon::Control"
+

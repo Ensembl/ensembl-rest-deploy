@@ -7,11 +7,10 @@
     - "{{ logdir }}"
   register: rest_dir_exists
 
-- name: Install Ensembl repos
-  git: repo="{{ item.repo }}" dest="{{ ensembl_install_dir }}/{{ item.dir }}" version="{{ item.version | default(ensembl_repo_version) }}" clone=yes
+- name: Install REST repos
+  git: repo="{{ item.repo }}" dest="{{ ensembl_install_dir }}/{{ item.dir }}" version="{{ item.version | default(ensembl_repo_version) }}" clone=yes recursive="{{ item.recursive | default('no') }}" force="{{ item.force | default('no') }}"
   with_items:
-       - { repo: 'https://github.com/Ensembl/ensembl-rest.git', dir: ensembl-rest, version: 'master' }
-       - { repo: 'https://github.com/Ensembl/ensembl-hdf5.git', dir: ensembl-hdf5, version: 'master' }
+       - { repo: 'https://github.com/Ensembl/ensembl-rest.git', dir: ensembl-rest }
   when: rest_dir_exists
   register: repos_exist
 
@@ -25,9 +24,15 @@
        - ensembl-rest
   when: repos_exist
 
+- name: Set LD_LIBRARY_PATH for local packages
+  lineinfile: dest="{{ PERL_RC | default('~/.bashrc') }}" line="export LD_LIBRARY_PATH={{ ensembl_install_dir }}/local/lib/${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}"
+  with_items:
+    - export LD_LIBRARY_PATH={{ ensembl_install_dir }}/local/lib/${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+    - export CPATH={{ ensembl_install_dir }}/local/include/${CPATH:+:${CPATH}}    
+
 - name: Determine if HDF5 is installed
   stat:
-    path: "{{ homedir }}/local/lib/libhdf5.so"
+    path: "{{ ensembl_install_dir }}/local/lib/libhdf5.so"
   register: hdf5_status
 
 - name: Set hdf5 install if lib does not exist
@@ -54,31 +59,104 @@
   args:
     chdir: "{{ ensembl_install_dir }}/hdf5-{{ hdf5_version }}"
   with_items:
-    - ./configure --prefix={{ homedir }}/local
+    - ./configure --prefix={{ ensembl_install_dir }}/local
     - make
     - make check
     - make install
     - make check-install
   when: install_hdf5_from_src is defined and install_hdf5_from_src
 
+- name: Determine if HDF5 ensembl repo is installed
+  stat:
+    path: "{{ ensembl_install_dir }}/ensembl-hdf5/Makefile"
+  register: ensembl_hdf5_status
+
+- name: Set ensembl hdf5 install if lib does not exist
+  set_fact:
+    install_ensembl_hdf5: true
+  when: ensembl_hdf5_status.stat.exists == False and install_hdf5
+
 - name: Install Ensembl HDF5 repo
   git: repo="{{ item.repo }}" dest="{{ ensembl_install_dir }}/{{ item.dir }}" version="{{ item.version | default(ensembl_repo_version) }}" clone=yes
   with_items:
        - { repo: 'https://github.com/Ensembl/ensembl-hdf5.git', dir: ensembl-hdf5, version: master }
+  when: install_ensembl_hdf5 is defined and install_ensembl_hdf5
 
-- name: Tune Ensembl HDF5 makefiles
+- name: Tune ensembl HDF5 makefiles
   lineinfile:
-    dest: "{{ item.file }}"
-    regexp: "{{ item.regexp }}"
-    line: "{{ item.line }}"
-    backrefs: true
+    dest="{{ item.dest }}"
+    backrefs=yes
+    regexp="{{ item.regexp }}"
+    line="{{ item.line }}"
   with_items:
-    - { file: "{{ ensembl_install_dir }}/ensembl-hdf5/c/Makefile", regexp: '^(INC=)$', line: "\\g<1>-I{{ homedir }}/local/include" }
-    - { file: "{{ ensembl_install_dir }}/ensembl-hdf5/c/Makefile", regexp: '^(LIB_PATHS=-L./)$', line: "\\g<1> -L{{ homedir }}/local/lib" }
-    - { file: "{{ ensembl_install_dir }}/ensembl-hdf5/xs/Makefile.PL", regexp: '^(\s+LIBS\s+=>)', line: "\\g<1> ['-L../c -lhdf5_wrapper -L{{ homedir }}/local/lib -lhdf5']," }
-    - { file: "{{ ensembl_install_dir }}/ensembl-hdf5/xs/Makefile.PL", regexp: '^(\s+INC\s+=>)', line: "\\g<1> '-I../c -I{{ homedir }}/local/include'," }
+    - { dest: "{{ ensembl_install_dir }}/ensembl-hdf5/c/Makefile", regexp: "^INC=", line: "INC=-I{{ ensembl_install_dir }}/local/include" }
+    - { dest: "{{ ensembl_install_dir }}/ensembl-hdf5/c/Makefile", regexp: "^LIB_PATHS=(-L{{ ensembl_install_dir }}/local/lib )?(.*)", line: "LIB_PATHS=-L{{ ensembl_install_dir }}/local/lib \\2" }
+    - { dest: "{{ ensembl_install_dir }}/ensembl-hdf5/xs/Makefile.PL", regexp: "(.*)-L/usr/lib(.*)", line: "\\1-L{{ ensembl_install_dir }}/local/lib\\2" }
+    - { dest: "{{ ensembl_install_dir }}/ensembl-hdf5/xs/Makefile.PL", regexp: "(.*)-I/usr/include('.*)", line: "\\1-I{{ ensembl_install_dir }}/local/include\\2" }
 
 - name: Make Ensembl HDF5
   shell: "source {{ PERL_RC | default('~/.bashrc') }} && make"
   args:
     chdir: "{{ ensembl_install_dir }}/ensembl-hdf5"
+    
+- name: Determine if progressiveCactus repo exists
+  stat:
+    path: "{{ ensembl_install_dir }}/progressiveCactus"
+  register: progressivecactus_status
+  when: install_progressivecactus is defined and install_progressivecactus
+
+- name: Set progressiveCactus install if not exists
+  set_fact:
+    fetch_progressivecactus: true
+  when: progressivecactus_status is defined and progressivecactus_status.stat.exists == False
+
+- name: Install progressiveCactus repo
+  git: repo="{{ item.repo }}" dest="{{ ensembl_install_dir }}/{{ item.dir }}" version="{{ item.version | default(ensembl_repo_version) }}" clone=yes recursive="{{ item.recursive | default('no') }}" force="{{ item.force | default('no') }}"
+  with_items:
+       - { repo: 'https://github.com/glennhickey/progressiveCactus.git', dir: progressiveCactus, version: 'master', recursive: yes, force: yes }
+  when: rest_dir_exists and fetch_progressivecactus is defined and fetch_progressivecactus
+
+#- name: Switch HAL branch in progressiveCactus
+#  shell: "source {{ PERL_RC | default('~/.bashrc') }} && git checkout master"
+#  args:
+#    chdir: "{{ ensembl_install_dir }}/progressiveCactus/submodules/hal"
+
+- name: Tune progressiveCactus makefile
+  lineinfile:
+    dest="{{ ensembl_install_dir }}/progressiveCactus/submodules/sonLib/include.mk"
+    state=present
+    backrefs=yes
+    regexp='^cflags_opt =( -fPIC)? (.*)'
+    line='cflags_opt = -fPIC \2'
+  when: install_progressivecactus is defined and install_progressivecactus
+
+- name: Set progressiveCactus default path
+  set_fact:
+    PROGRESSIVE_CACTUS_DEFAULT: "{{ ensembl_install_dir }}/progressiveCactus/"
+
+- name: Add progressiveCactus to PERL5LIB
+  lineinfile:
+    dest="{{ PERL_RC | default('~/.bashrc') }}"
+    state=present
+    backrefs=yes
+    regexp='^PATH=({{ ensembl_install_dir }}/ensembl-compara/modules/Bio/EnsEMBL/Compara/HAL/HALXS/blib/arch/auto:?)?(.*)'
+    line='PATH={{ ensembl_install_dir }}/ensembl-compara/modules/Bio/EnsEMBL/Compara/HAL/HALXS/blib/arch/auto:\2'
+
+- name: Configure compara progressiveCactus
+  lineinfile: dest="{{ PERL_RC | default('~/.bashrc') }}" line="{{ item }}"
+  with_items:
+    - export PROGRESSIVE_CACTUS_DIR={{ PROGRESSIVE_CACTUS_DIR | default(PROGRESSIVE_CACTUS_DEFAULT) }}
+    - export COMPARA_HAL_DIR={{ hal_file_dir }}
+
+- name: Make progressiveCactus
+  shell: "source {{ PERL_RC | default('~/.bashrc') }} && make"
+  args:
+    chdir: "{{ ensembl_install_dir }}/progressiveCactus"
+  environment:
+    CFLAGS: -std=c99
+  when: install_progressivecactus is defined and install_progressivecactus
+
+- name: Make Compara progressiveCactus bindings
+  shell: "source {{ PERL_RC | default('~/.bashrc') }} && perl Makefile.PL && make"
+  args:
+    chdir: "{{ ensembl_install_dir }}/ensembl-compara/modules/Bio/EnsEMBL/Compara/HAL/HALXS"

@@ -5,7 +5,7 @@
   with_items:
     - { src: "{{ rest_private_dir }}/conf/ensembl_rest.conf.j2", dest: "{{ rest_private_dir }}/conf/ensembl_rest.conf" }
     - { src: "{{ rest_private_dir }}/conf/ensrest.psgi.j2", dest: "{{ rest_private_dir }}/conf/ensrest.psgi" }
-    - { src: "{{ rest_private_dir }}/conf/ga_references.json.j2", dest: "{{ rest_private_dir }}/conf/ga_references_GRCh{{ ensembl_sub_release }}.json" }
+    - { src: "{{ rest_private_dir }}/conf/ga_references.json.j2", dest: "{{ rest_private_dir }}/conf/ga_references_{{ human_assembly }}.json" }
     - { src: "{{ rest_private_dir }}/conf/vcf_config.json.j2", dest: "{{ rest_private_dir }}/conf/vcf_config.json" }
     - { src: "{{ rest_private_dir }}/conf/vep_plugin_config.txt.j2", dest: "{{ rest_private_dir }}/conf/vep_plugin_config.txt" }
 #  when: release_loaded
@@ -16,22 +16,116 @@
     - { src: "{{ rest_private_dir }}/conf/ensembl_rest.conf.j2", dest: "{{ ensembl_install_dir }}/ensembl-rest/configurations/production/ensembl_rest.conf" }
     - { src: "{{ rest_private_dir }}/conf/ensrest.psgi.j2", dest: "{{ ensembl_install_dir }}/ensembl-rest/configurations/production/ensrest.psgi" }
     - { src: "{{ rest_private_dir }}/conf/ga_references.json.j2", dest: "{{ ga4gh_reference_config }}" }
-    - { src: "{{ rest_private_dir }}/conf/vcf_config.json.j2", dest: "{{ vcf_config }}" }
+    - { src: "{{ rest_private_dir }}/conf/{{ vcf_config_json }}", dest: "{{ vcf_config }}" }
     - { src: "{{ rest_private_dir }}/conf/vep_plugin_config.txt.j2", dest: "{{ vep_plugin_config }}" }
 #  when: release_loaded
 
 - name: Copy non-templated REST config files
   copy: src="{{ item.src }}" dest="{{ item.dest }}" mode=0640
   with_items:
-    - { src: "{{ rest_private_dir }}/conf/ga_vcf_config_GRCh{{ ensembl_sub_release }}.json", dest: "{{ ga4gh_config }}" }
+    - { src: "{{ rest_private_dir }}/conf/ga_vcf_config_{{ human_assembly }}.json", dest: "{{ ga4gh_config }}" }
 
-- name: Add perl env variables to startup script
-  blockinfile:
-    path: "{{ ensembl_install_dir }}/ensembl-rest/bin/production/start_rest_server.sh"
-    marker: "# {mark} Ansible Perl Paths"
-    content: |
-    source {{ PERL_RC | default('~/.bashrc') }}
+- name: Deal with password not being required
+  lineinfile:
+    dest="{{ ensembl_install_dir }}/ensembl-rest/configurations/production/ensembl_rest.conf"
+    state=absent
+    regexp="^\s*pass"
+  when: db_pass is not defined
+    
+#- name: Add perl env variables to startup script
+#  blockinfile:
+#    dest: "{{ ensembl_install_dir }}/ensembl-rest/bin/production/start_rest_server.sh"
+#    marker: "# {mark} Ansible Perl Paths"
+#    content: |
+#      source {{ PERL_RC | default('~/.bashrc') }}
 
-- debug:
-    msg: "vep_cache_dir: {{ vep_cache_dir }}"
-#  when: release_loaded
+#- name: Change activation file
+#  lineinfile:
+#    dest="{{ ensembl_install_dir }}/ensembl-rest/bin/production/start_rest_server.sh"
+#    state=present
+#    regexp='perlbrew/etc/bashrc$'
+#    line=". {{ PERL_RC | default('~/.bashrc') }}"
+
+- name: Set status file if available
+  lineinfile:
+    dest="{{ PERL_RC | default('~/.bashrc') }}"
+    line="export ENSEMBL_LOG_ROOT={{ rest_log_root }}"
+  when: rest_log_root is defined
+
+- name: Set status file if available
+  lineinfile:
+    dest="{{ PERL_RC | default('~/.bashrc') }}"
+    line="export ENSEMBL_REST_STATUS={{ rest_status_file }}"
+  when: rest_status_file is defined
+
+- name: Set PID file if available
+  lineinfile:
+    dest="{{ PERL_RC | default('~/.bashrc') }}"
+    line="export ENSEMBL_REST_PID={{ rest_pid_file }}"
+  when: rest_pid_file is defined
+
+- name: Set REST port if available
+  lineinfile:
+    dest="{{ PERL_RC | default('~/.bashrc') }}"
+    line="export ENSEMBL_REST_PORT={{ ENSEMBL_REST_PORT }}"
+  when: ENSEMBL_REST_PORT is defined
+
+- name: Set REST workers if available
+  lineinfile:
+    dest="{{ PERL_RC | default('~/.bashrc') }}"
+    line="export ENSEMBL_REST_WORKERS={{ ENSEMBL_REST_WORKERS }}"
+  when: ENSEMBL_REST_WORKERS is defined
+
+- name: Set REST backlog if available
+  lineinfile:
+    dest="{{ PERL_RC | default('~/.bashrc') }}"
+    line="export ENSEMBL_REST_BACKLOG={{ ENSEMBL_REST_BACKLOG }}"
+  when: ENSEMBL_REST_BACKLOG is defined
+
+- name: Set REST max requests if available
+  lineinfile:
+    dest="{{ PERL_RC | default('~/.bashrc') }}"
+    line="export ENSEMBL_REST_MAX_REQUESTS={{ ENSEMBL_REST_MAX_REQUESTS }}"
+  when: ENSEMBL_REST_MAX_REQUESTS is defined
+
+- set_fact:
+    ens_log4perl: "{{ ensembl_install_dir }}/ensembl-rest/configurations/production/log4perl.conf"
+  
+- name: Configure logging
+  lineinfile:
+    dest="{{ PERL_RC | default('~/.bashrc') }}"
+    line="export ENS_REST_LOG4PERL={{ ENSEMBL_REST_LOG4PERL | default(ens_log4perl) }}"
+  when: ENSEMBL_REST_MAX_REQUESTS is defined
+
+- name: Set TDP_HOME for Catalyst
+  lineinfile:
+    dest="{{ PERL_RC | default('~/.bashrc') }}"
+    line="export TDP_HOME={{ ensembl_install_dir }}/ensembl-rest/"
+
+- set_fact:
+    ens_rest_config: "{{ ensembl_install_dir }}/ensembl-rest/configurations/production/ensembl_rest.conf"
+
+- name: Set REST config file
+  lineinfile:
+    dest="{{ PERL_RC | default('~/.bashrc') }}"
+    line="export ENSEMBL_REST_CONFIG={{ ENSEMBL_REST_CONFIG | default(ens_rest_config) }}"
+
+- name: Set Ensembl init config to source
+  lineinfile:
+    dest="{{ PERL_RC | default('~/.bashrc') }}"
+    line="export ENSEMBL_INIT_CONFIG={{ PERL_RC | default('~/.bashrc') }}"
+
+- name: Create REST init script
+  shell: "source {{ PERL_RC | default('~/.bashrc') }} && perl server_control.pl get_init_file >ensembl_rest"
+  args:
+    chdir: "{{ ensembl_install_dir }}/ensembl-rest/bin/production"
+    creates: "{{ ensembl_install_dir }}/ensembl-rest/bin/production/ensembl_rest"
+  register: init_exists
+
+- debug: msg="{{ init_exists.stdout }}"
+
+- name: Change init file to be executable
+  file:
+    path="{{ ensembl_install_dir }}/ensembl-rest/bin/production/ensembl_rest"
+    mode=0755
+  when: init_exists

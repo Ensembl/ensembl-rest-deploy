@@ -1,0 +1,38 @@
+# Role: ebi_brew
+
+- name: Ensure the path and activation script exists
+  file: path="{{ PERL_RC | dirname }}" state=directory force=yes
+
+# Because one step involves --recursive, we need the
+# proxy to be configured for the user. git --recursive doesn't
+# pass any proxy set via env variable down to the sub-shell it creates
+
+#- name: Ensure virtual user has http proxy
+#  lineinfile: dest='~/.bash_profile' line="{{ item }}"
+#  with_items:
+#    - export HTTP_PROXY={{ HTTP_PROXY }}
+#    - export HTTPS_PROXY={{ HTTP_PROXY }}
+
+#- name: Ensure virtual user has http proxy
+#  lineinfile: dest='~/.bashrc' line="{{ item }}"
+#  with_items:
+#    - export HTTP_PROXY={{ HTTP_PROXY }}
+#    - export HTTPS_PROXY={{ HTTP_PROXY }}
+
+# Because of EBI firewalling, git:// (port 9418) is blocked,
+# we need to make git use https:// instead.
+
+- name: Configure the user to use https instead of git protocol
+  shell: git config --global url.https://github.com/.insteadOf git://github.com/
+
+- name: Add ensembl brew environment to activation script
+  blockinfile:
+    dest: "{{ PERL_RC }}"
+    create: yes
+    marker: "# {mark} EBI BREW CONFIG"
+    insertbefore: BOF
+    content: |
+      export SHARE_PATH="{{ SHARED_PATH }}"
+      source "{{ SHARED_PATH }}/.bashrc_linuxbrew"
+      source "{{ SHARED_PATH }}/.bashrc_ensembl"
+      export LANG=C

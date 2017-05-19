@@ -125,5 +125,5 @@ To export the VM for distribution, open virtualbox and under File->Export Applic
 ## Build REST on EBI farm
 
 ```
-ansible-playbook -e "rest_private_dir=~/src/ensembl-rest_private/rest.ensembl.org ensembl_repo_version=release/88 homedir=/nfs/public/release/ensweb/rest/e88 ensembl_user=ens_adm20 ensembl_group=ens_pub" -i "hx_login," rest_ebi.yml
+ansible-playbook -e "rest_private_dir=~/src/ensembl-rest_private/rest.ensembl.org ensembl_repo_version=release/88 ensembl_install_dir=/nfs/public/release/ensweb/rest/e88 ensembl_user=ens_adm20 ensembl_group=ens_pub" -i "hx_login," rest_ebi.yml
 ```

@@ -6,18 +6,25 @@
     - "{{ rest_private_dir }}/conf/release_ebi.yml"
 
   vars:
-    source_list: ['.bashrc_linuxbrew', '.bashrc_ensembl']
-    PERL_RC: "{{ homedir }}/active_perl_e{{ ensembl_release }}"
-    ebi_perl: true
+    PERL_RC: "{{ ensembl_install_dir }}/activate_ensembl"
+    HTTP_PROXY: http://hx-wwwcache.ebi.ac.uk:3128
+    LANG: C
+    SHARED_PATH: "/nfs/public/release/ensweb-software/sharedsw/e{{ ensembl_release }}"
+    PROGRESSIVE_CACTUS_DIR: "{{ SHARED_PATH }}/paths/progressiveCactusFake/"
+    vcf_config_json: vcf_config_ebi.json.j2
+#    ebi_perl: true
+#    source_list: ['.bashrc_linuxbrew', '.bashrc_ensembl']
 
   environment:
     HTSLIB_DIR: "{{ ensembl_install_dir}}/htslib"
-    HTTP_PROXY: 'http://hx-wwwcache.ebi.ac.uk:3128'
-    HTTPS_PROXY: 'http://hx-wwwcache.ebi.ac.uk:3128'
-    http_proxy: 'http://hx-wwwcache.ebi.ac.uk:3128'
-    https_proxy: 'http://hx-wwwcache.ebi.ac.uk:3128'
+    HTTP_PROXY: "{{ HTTP_PROXY }}"
+    HTTPS_PROXY: "{{ HTTP_PROXY }}"
+    http_proxy: "{{ HTTP_PROXY }}"
+    https_proxy: "{{ HTTP_PROXY }}"
 
   roles:
+    - { role: ebi_brew, become: false }
+    - { role: plenv, perl_version: 5.14.3, plenv_install_dir: "{{ ensembl_install_dir }}/.plenv" }
     - { role: rest, become: false }
 #    - { role: rest_validate, become: false }
-#    - { role: rest_ebi_config, become: false }
+    - { role: rest_config, become: false }
