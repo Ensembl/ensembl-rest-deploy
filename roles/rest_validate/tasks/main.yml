@@ -12,6 +12,8 @@
     - "{{ vep_plugin_dir }}"
     - "{{ vep_plugin_data_dir }}"
     - "{{ human_genotypes_dir }}"
+    - "{{ eqtl_file }}"
+    - "{{ hal_file_dir }}"
   register: release_dirs
 
 - name: Ensure the data directories exist

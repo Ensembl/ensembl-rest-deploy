@@ -23,8 +23,8 @@
     https_proxy: "{{ HTTP_PROXY }}"
 
   roles:
-#    - { role: ebi_brew, become: false }
-#    - { role: plenv, perl_version: 5.14.3, plenv_install_dir: "{{ ensembl_install_dir }}/.plenv" }
-#    - { role: rest, become: false }
+    - { role: ebi_brew, become: false }
+    - { role: plenv, perl_version: 5.14.3, plenv_install_dir: "{{ ensembl_install_dir }}/.plenv" }
+    - { role: rest, become: false }
     - { role: rest_validate, become: false }
-#    - { role: rest_config, become: false }
+    - { role: rest_config, become: false }
