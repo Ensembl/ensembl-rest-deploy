@@ -6,8 +6,8 @@
     - "{{ rest_private_dir }}/conf/release.yml"
 
   variables:
-    - local_perl: true
-
+    - install_progressivecactus: true
+      
   environment:
     HTSLIB_DIR: "{{ ensembl_install_dir}}/htslib"
 

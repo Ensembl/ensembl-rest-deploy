@@ -12,6 +12,7 @@
     SHARED_PATH: "/nfs/public/release/ensweb-software/sharedsw/e{{ ensembl_release }}"
     PROGRESSIVE_CACTUS_DIR: "{{ SHARED_PATH }}/paths/progressiveCactusFake/"
     vcf_config_json: vcf_config_ebi.json.j2
+    validate_config: true
 #    ebi_perl: true
 #    source_list: ['.bashrc_linuxbrew', '.bashrc_ensembl']
 
@@ -26,5 +27,5 @@
     - { role: ebi_brew, become: false }
     - { role: plenv, perl_version: 5.14.3, plenv_install_dir: "{{ ensembl_install_dir }}/.plenv" }
     - { role: rest, become: false }
-    - { role: rest_validate, become: false }
+    - { role: rest_validate, become: false, when: validate_config }
     - { role: rest_config, become: false }
