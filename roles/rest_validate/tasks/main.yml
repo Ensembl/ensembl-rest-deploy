@@ -9,6 +9,7 @@
   with_items:
     - "{{ data_root }}"
     - "{{ vep_cache_dir }}"
+    - "{{ vep_cache_dir }}/homo_sapiens/{{ ensembl_release }}_{{ human_assembly }}"
     - "{{ vep_plugin_dir }}"
     - "{{ vep_plugin_data_dir }}"
     - "{{ human_genotypes_dir }}"

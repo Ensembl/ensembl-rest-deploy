@@ -46,6 +46,12 @@
 #    regexp='perlbrew/etc/bashrc$'
 #    line=". {{ PERL_RC | default('~/.bashrc') }}"
 
+- name: Set log4perl file to use
+  lineinfile:
+    dest="{{ PERL_RC | default('~/.bashrc') }}"
+    line="export ENS_REST_LOG4PERL={{ ensembl_install_dir }}/ensembl-rest/configurations/production/log4perl.conf"
+  when: rest_log_root is defined
+
 - name: Set status file if available
   lineinfile:
     dest="{{ PERL_RC | default('~/.bashrc') }}"
