@@ -1,6 +1,6 @@
 ensembl_user: ensembl
 ensembl_group: ensembl
-homedir: "{{ ansible_env.HOME}}"
+homedir: "~/"
 #homedir: "/home/{{ ensembl_user }}"
 logdir: "{{ homedir }}/log"
 ensembl_install_dir: "{{ homedir }}/src"

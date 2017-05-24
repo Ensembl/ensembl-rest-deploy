@@ -1,7 +1,16 @@
 # Role: plenv
 
 - set_fact:
-    plenv_dir: "{{ plenv_install_dir | default('~/.plenv') }}"
+    plenv_dir: "{{ plenv_install_dir | default( '$HOME/.plenv') }}"
+
+- name: plenv_dir
+  debug: msg="{{ plenv_dir}}"
+
+- name: Ensure the path for plenv exists
+  file: path="{{ plenv_dir | dirname }}" state=directory force=yes
+
+- name: Ensure the path for the activation script exists
+  file: path="{{ PERL_RC | dirname }}" state=directory force=yes
 
 - name: Clone plenv
   git: repo="https://github.com/tokuhirom/plenv.git" dest="{{ plenv_dir }}" version="master" clone=yes
@@ -18,18 +27,24 @@
       #export PATH="{{ plenv_dir }}/bin:{{ plenv_dir }}/plugins/perl-build/bin/:$PATH"
       eval "$(plenv init -)"
 
+- name: Ensure plenv build and cache exist
+  file: path="{{ plenv_dir }}/{{ item }}" state=directory mode=0755
+  with_items:
+    - cache
+    - build
+
 - name: Clone perl-build
   git: repo="https://github.com/tokuhirom/Perl-Build.git" dest="{{ plenv_dir }}/plugins/perl-build/" version="master" clone=yes
 
 - name: Install {{ perl_version }} (may take some time...)
-  shell: "source {{ PERL_RC | default('~/.bashrc') }} && plenv install {{ perl_version }}"
+  shell: ". {{ PERL_RC | default('~/.bashrc') }} && plenv install {{ perl_version }}"
   args:
-    creates: "{{ plenv_install_dir }}/versions/{{ perl_version }}"
+    creates: "{{ plenv_dir }}/versions/{{ perl_version }}"
 
 - name: Install cpanm
-  shell: "source {{ PERL_RC | default('~/.bashrc') }} && plenv install-cpanm"
+  shell: ". {{ PERL_RC | default('~/.bashrc') }} && plenv install-cpanm"
 
 # Eventually add this to cpanfile for REST
 - name: Ensure Daemon::Control installed
-  shell: "source {{ PERL_RC | default('~/.bashrc') }} && cpanm install Daemon::Control"
+  shell: ". {{ PERL_RC | default('~/.bashrc') }} && cpanm install Daemon::Control"
 

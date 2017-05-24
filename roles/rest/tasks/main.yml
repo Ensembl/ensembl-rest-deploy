@@ -1,7 +1,7 @@
 # Role: rest
 
 - name: Create REST install directory
-  file: path="{{ item }}" state=directory mode=0755 owner="{{ ensembl_user }}" group="{{ ensembl_group }}"
+  file: path="{{ item }}" state=directory mode=0755
   with_items:
     - "{{ ensembl_install_dir }}"
     - "{{ logdir }}"
@@ -17,7 +17,7 @@
 #    command: "sudo -iu {{ ensembl_user }} cpanm -v --installdeps --with-recommends --notest --cpanfile={{ ensembl_install_dir }}/{{ item }}/cpanfile ."
 
 - name: Install repo cpan dependencies
-  shell: "source {{ PERL_RC | default('~/.bashrc') }} && cpanm -v --installdeps --with-recommends --notest --cpanfile={{ ensembl_install_dir }}/{{ item }}/cpanfile ."
+  shell: ". {{ PERL_RC | default('~/.bashrc') }} && cpanm -v --installdeps --with-recommends --notest --cpanfile={{ ensembl_install_dir }}/{{ item }}/cpanfile ."
   args:
     chdir: "{{ ensembl_install_dir }}/{{ item }}"
   with_items:
@@ -55,7 +55,7 @@
   when: install_hdf5_from_src is defined and install_hdf5_from_src
 
 - name: Build HDF5
-  shell: "source {{ PERL_RC | default('~/.bashrc') }} && {{ item }}"
+  shell: ". {{ PERL_RC | default('~/.bashrc') }} && {{ item }}"
   args:
     chdir: "{{ ensembl_install_dir }}/hdf5-{{ hdf5_version }}"
   with_items:
@@ -95,7 +95,7 @@
     - { dest: "{{ ensembl_install_dir }}/ensembl-hdf5/xs/Makefile.PL", regexp: "(.*)-I/usr/include('.*)", line: "\\1-I{{ ensembl_install_dir }}/local/include\\2" }
 
 - name: Make Ensembl HDF5
-  shell: "source {{ PERL_RC | default('~/.bashrc') }} && make"
+  shell: ". {{ PERL_RC | default('~/.bashrc') }} && make"
   args:
     chdir: "{{ ensembl_install_dir }}/ensembl-hdf5"
     
@@ -115,11 +115,6 @@
   with_items:
        - { repo: 'https://github.com/glennhickey/progressiveCactus.git', dir: progressiveCactus, version: 'master', recursive: yes, force: yes }
   when: rest_dir_exists and fetch_progressivecactus is defined and fetch_progressivecactus
-
-#- name: Switch HAL branch in progressiveCactus
-#  shell: "source {{ PERL_RC | default('~/.bashrc') }} && git checkout master"
-#  args:
-#    chdir: "{{ ensembl_install_dir }}/progressiveCactus/submodules/hal"
 
 - name: Tune progressiveCactus makefile
   lineinfile:
@@ -149,7 +144,7 @@
     - export COMPARA_HAL_DIR={{ hal_file_dir }}
 
 - name: Make progressiveCactus
-  shell: "source {{ PERL_RC | default('~/.bashrc') }} && make"
+  shell: ". {{ PERL_RC | default('~/.bashrc') }} && make"
   args:
     chdir: "{{ ensembl_install_dir }}/progressiveCactus"
   environment:
@@ -157,6 +152,6 @@
   when: install_progressivecactus is defined and install_progressivecactus
 
 - name: Make Compara progressiveCactus bindings
-  shell: "source {{ PERL_RC | default('~/.bashrc') }} && perl Makefile.PL && make"
+  shell: ". {{ PERL_RC | default('~/.bashrc') }} && perl Makefile.PL && make"
   args:
     chdir: "{{ ensembl_install_dir }}/ensembl-compara/modules/Bio/EnsEMBL/Compara/HAL/HALXS"

@@ -30,7 +30,7 @@
     path: "{{ ensembl_install_dir }}/ensembl-rest/bin/production/start_rest_server.sh"
     marker: "# {mark} Ansible Perl Paths"
     content: |
-    source {{ PERL_RC | default('~/.bashrc') }}
+    . {{ PERL_RC | default('~/.bashrc') }}
        
 - debug:
     msg: "vep_cache_dir: {{ vep_cache_dir }}"

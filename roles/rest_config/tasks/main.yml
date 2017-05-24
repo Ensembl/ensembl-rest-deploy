@@ -116,10 +116,9 @@
     line="export ENSEMBL_INIT_CONFIG={{ PERL_RC | default('~/.bashrc') }}"
 
 - name: Create REST init script
-  shell: "source {{ PERL_RC | default('~/.bashrc') }} && perl server_control.pl get_init_file >ensembl_rest"
+  shell: ". {{ PERL_RC | default('~/.bashrc') }} && perl server_control.pl get_init_file >ensembl_rest"
   args:
     chdir: "{{ ensembl_install_dir }}/ensembl-rest/bin/production"
-    creates: "{{ ensembl_install_dir }}/ensembl-rest/bin/production/ensembl_rest"
   register: init_exists
 
 - debug: msg="{{ init_exists.stdout }}"

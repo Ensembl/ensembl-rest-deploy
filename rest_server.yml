@@ -5,8 +5,9 @@
     - vars/main.yml
     - "{{ rest_private_dir }}/conf/release.yml"
 
-  variables:
+  vars:
     - install_progressivecactus: true
+    - PERL_RC: "{{ ensembl_install_dir }}/activate_ensembl"
       
   environment:
     HTSLIB_DIR: "{{ ensembl_install_dir}}/htslib"
@@ -14,7 +15,7 @@
   roles:
     - { role: system, when: install_system is defined and install_system }
     - { role: embassy, when: embassy_config is defined and embassy_config }
-    - { role: plenv, perl_version: 5.14.4 }
+    - { role: plenv, perl_version: 5.14.4, become: false }
     - { role: rest, become: false }
     - { role: rest_validate, become: false }
     - { role: rest_config, become: false }

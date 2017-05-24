@@ -1,7 +1,7 @@
 # Role: ensembl
 
 - name: Create Ensembl install directory
-  file: path="{{ item }}" state=directory mode=0755 owner="{{ ensembl_user }}" group="{{ ensembl_group }}"
+  file: path="{{ item }}" state=directory mode=0755
   with_items:
     - "{{ ensembl_install_dir }}"
     - "{{ logdir }}"
@@ -63,7 +63,7 @@
 #  command: "source $SHARE_PATH/.bashrc_linuxbrew && source $SHARE_PATH/.bashrc_ensembl && cpanm -v --installdeps --with-recommends --notest --cpanfile={{ ensembl_install_dir }}/{{ item }}/cpanfile ."
 
 - name: Install Ensembl repo cpan dependencies
-  shell: "source {{ PERL_RC | default('~/.bashrc') }} && cpanm -v --installdeps --with-recommends --notest --cpanfile={{ ensembl_install_dir }}/{{ item }}/cpanfile ."
+  shell: ". {{ PERL_RC | default('~/.bashrc') }} && cpanm -v --installdeps --with-recommends --notest --cpanfile={{ ensembl_install_dir }}/{{ item }}/cpanfile ."
   args:
     chdir="{{ ensembl_install_dir }}/{{ item }}"
   with_items:

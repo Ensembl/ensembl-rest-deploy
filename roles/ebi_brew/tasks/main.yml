@@ -33,6 +33,6 @@
     insertbefore: BOF
     content: |
       export SHARE_PATH="{{ SHARED_PATH }}"
-      source "{{ SHARED_PATH }}/.bashrc_linuxbrew"
-      source "{{ SHARED_PATH }}/.bashrc_ensembl"
+      . "{{ SHARED_PATH }}/.bashrc_linuxbrew"
+      . "{{ SHARED_PATH }}/.bashrc_ensembl"
       export LANG=C

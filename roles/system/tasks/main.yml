@@ -17,6 +17,8 @@
        - libexpat1-dev
        - liblzma-dev
        - libbz2-dev
+       - python-pip
+       - virtualenv
   when: ansible_os_family == 'Debian'
 
 # Not yet tested on a RH based system
@@ -33,4 +35,11 @@
        - libexpat1-devel
        - liblzma-devel
        - libbz2-devel
+       - python-pip
+       - python-virtualenv
   when: ansible_os_family == 'RedHat'
+
+# Deal with an ubuntu specific bug with perl
+- name: Correct Ubuntu python bug
+  shell: ln -sf /usr/lib/python2.7/plat-*/_sysconfigdata_nd.py /usr/lib/python2.7/
+  when: ansible_distribution == 'Ubuntu'
