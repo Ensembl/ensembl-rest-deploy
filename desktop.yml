@@ -6,6 +6,7 @@
 
   environment:
     HTSLIB_DIR: "{{ ensembl_install_dir}}/htslib"
+    PERL_RC: '/home/ensembl/.profile'
 
   roles:
     - { role: system, when: install_system is defined and install_system }
