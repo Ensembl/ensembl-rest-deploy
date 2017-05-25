@@ -11,7 +11,8 @@
 
 - name: Ensure the path for the activation script exists
   file: path="{{ PERL_RC | dirname }}" state=directory force=yes
-
+  when: PERL_RC is defined
+  
 - name: Clone plenv
   git: repo="https://github.com/tokuhirom/plenv.git" dest="{{ plenv_dir }}" version="master" clone=yes
 
