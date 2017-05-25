@@ -6,7 +6,16 @@
 
   environment:
     HTSLIB_DIR: "{{ ensembl_install_dir}}/htslib"
-    PERL_RC: '/home/ensembl/.profile'
+
+  pre_tasks:
+    - name: Check if we are using Ubuntu and fix PERL_RC
+      set_fact:
+        PERL_RC: '/home/ensembl/.profile'
+      when: ansible_distribution == 'Ubuntu'
+
+    - name: Show PERL_RC
+      debug: msg="{{ PERL_RC }}"
+      when: PERL_RC is defined
 
   roles:
     - { role: system, when: install_system is defined and install_system }
