@@ -30,7 +30,7 @@ cd ensembl-rest-deploy
 #git clone https://github.com/lairdm/ansible-perlbrew.git
 
 # Install Ensembl
-ansible-playbook -i "localhost," -e "ensembl_repo_version=$REPO install_system=True" desktop.yml --connection=local
+ansible-playbook -u ensembl -i "localhost," -e "ensembl_repo_version=$REPO install_system=True" desktop.yml --connection=local
 
 # Remove the deploy repo
 cd ..
