@@ -26,7 +26,7 @@ pip install ansible
 git clone https://github.com/Ensembl/ensembl-rest-deploy.git
 
 # Clone the perlbrew repo for the install
-#cd ensembl-rest-deploy
+cd ensembl-rest-deploy
 #git clone https://github.com/lairdm/ansible-perlbrew.git
 
 # Install Ensembl
