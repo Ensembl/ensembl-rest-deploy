@@ -1,6 +1,6 @@
 ensembl_user: ensembl
 ensembl_group: ensembl
-homedir: "$HOME"
+homedir: "\${HOME}"
 #homedir: "/home/{{ ensembl_user }}"
 logdir: "{{ homedir }}/log"
 ensembl_install_dir: "{{ homedir }}/src"
