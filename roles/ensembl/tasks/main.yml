@@ -29,8 +29,15 @@
   when: ensembl_dir_exists
   register: repos_exist
 
-- include: local_perl.yml
-  when: local_perl is defined and local_perl == true
+- name: Look at homedir
+  shell: "ls -la {{ homedir }}"
+  register: homedir_ls
+
+- name: Check homedir
+  debug: msg="{{ homedir_ls.stdout }}"
+
+#- include: local_perl.yml
+#  when: local_perl is defined and local_perl == true
 
 #- include: ebi_perl.yml
 #  when: ebi_perl is defined and ebi_perl == true
