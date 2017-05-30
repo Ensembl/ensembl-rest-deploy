@@ -1,0 +1,2 @@
+[com.canonical.Unity.Launcher]
+favorites = ['application://nautilus.desktop', 'application://gnome-terminal.desktop', 'application://gedit.desktop', 'application://firefox.desktop', 'application://libreoffice-writer.desktop', 'application://libreoffice-calc.desktop', 'application://libreoffice-impress.desktop', 'application://ubuntu-software-center.desktop', 'unity://running-apps', 'unity://expo-icon', 'unity://devices']

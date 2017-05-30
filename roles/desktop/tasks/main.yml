@@ -126,3 +126,9 @@
 
 - name: Remove Amazon search results icon
   file: path=/usr/share/applications/ubuntu-amazon-default.desktop state=absent force=yes
+
+- name: Change the default launcher icons
+  copy: src="{{ role_path }}/files/99_launcher.favorites.gschema.override" dest="/usr/share/glib-2.0/schemas/99_launcher.favorites.gschema.override" owner="root" mode=0755 group="root"
+
+- name: Compile the schema for launcher changes
+  shell: glib-compile-schemas /usr/share/glib-2.0/schemas/
