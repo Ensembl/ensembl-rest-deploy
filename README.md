@@ -80,6 +80,8 @@ Build with installing the system packages and configuring the Embassy OpenStack 
 ansible-playbook -e "rest_private_dir=$REPO_HOME/ensembl-rest_private/rest.ensembl.org ensembl_repo_version=release/87 install_system=True embassy_config=True homedir=/home/ubuntu ensembl_user=ubuntu" -i "192.168.0.141," rest_server.yml
 ```
 
+If you need to only rerun the validation and configuration steps add skip_install=True to the variables in -e, and remove the install_system=True embassy_config=True (if used).
+
 # Building the Ensembl VM
 
 You will need [Packer](https://www.packer.io/), [Vagrant](https://www.vagrantup.com/) and Virtualbox installed. As well, you will need the following repos checked out:
