@@ -37,3 +37,21 @@
     - not item | skipped
     - item.stat.exists == false
   with_items: "{{ release_datafiles.results }}"
+
+- name: ga4gh features config (grch37 only)
+  stat: path="{{ ga4gh_features_config }}" get_checksum=False get_md5=False
+  register: ga4gh_features
+  when: ga4gh_features_config is defined
+
+- name: Ensure ga4gh features config exists (grch37 only)
+  fail: msg="File {{ ga4gh_features_config}} doesn't exist"
+  when: ga4gh_features_config is defined and ga4gh_features.stat.exists == false
+
+- name: ga4gh compliance datafile (grch37 only)
+  stat: path="{{ ga4gh_compliance_file }}" get_checksum=False get_md5=False
+  register: ga4gh_compliance
+  when: ga4gh_compliance_file is defined
+
+- name: Ensure ga4gh compliance datafile exists (grch37 only)
+  fail: msg="File {{ ga4gh_compliance_file }} doesn't exist"
+  when: ga4gh_compliance_file is defined and ga4gh_compliance.stat.exists == false
