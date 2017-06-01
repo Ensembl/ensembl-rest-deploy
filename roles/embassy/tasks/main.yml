@@ -45,7 +45,7 @@
 - meta: flush_handlers
   when: dnsmasq_configured
 
-- name: Mount shared data
+- name: Mount shared data (GRCh38)
   mount: name="{{ item.path }}" src="{{ item.src }}" fstype="{{ item.fstype }}" opts="{{ item.opts }}" state=mounted
   with_items:
     - { path: "/mnt/data", src: "192.168.0.60:/mnt/data/grch38", fstype: "nfs", opts: "soft,tcp,rsize=8192,wsize=8192,noexec,nosuid" }

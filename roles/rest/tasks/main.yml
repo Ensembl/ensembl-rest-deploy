@@ -136,13 +136,19 @@
     backrefs=yes
     regexp='^PATH=({{ ensembl_install_dir }}/ensembl-compara/modules/Bio/EnsEMBL/Compara/HAL/HALXS/blib/arch/auto:?)?(.*)'
     line='PATH={{ ensembl_install_dir }}/ensembl-compara/modules/Bio/EnsEMBL/Compara/HAL/HALXS/blib/arch/auto:\2'
-  when: install_progressivecactus is defined and install_progressivecactus
+  when: hal_file_dir is defined
+
+- name: hal_file_dir
+  debug: msg="{{ hal_file_dir }}"
+  when: hal_file_dir is defined
 
 - name: Configure compara progressiveCactus
-  lineinfile: dest="{{ PERL_RC | default('~/.bashrc') }}" line="{{ item }}"
-  with_items:
-    - export PROGRESSIVE_CACTUS_DIR={{ PROGRESSIVE_CACTUS_DIR | default(PROGRESSIVE_CACTUS_DEFAULT) }}
-    - export COMPARA_HAL_DIR={{ hal_file_dir }}
+  blockinfile:
+    dest: "{{ PERL_RC | default('~/.bashrc') }}"
+    marker: "# {mark} progressiveCactus config"
+    content: |
+      export PROGRESSIVE_CACTUS_DIR={{ PROGRESSIVE_CACTUS_DIR | default(PROGRESSIVE_CACTUS_DEFAULT) }}
+      export COMPARA_HAL_DIR={{ hal_file_dir }}
   when: hal_file_dir is defined
 
 - name: Make progressiveCactus
@@ -151,10 +157,10 @@
     chdir: "{{ ensembl_install_dir }}/progressiveCactus"
   environment:
     CFLAGS: -std=c99
-  when: install_progressivecactus is defined and install_progressivecactus
+  when: install_progressivecactus
 
 - name: Make Compara progressiveCactus bindings
   shell: ". {{ PERL_RC | default('~/.bashrc') }} && perl Makefile.PL && make"
   args:
     chdir: "{{ ensembl_install_dir }}/ensembl-compara/modules/Bio/EnsEMBL/Compara/HAL/HALXS"
-  when: install_progressivecactus is defined and install_progressivecactus
+  when: hal_file_dir is defined

@@ -6,7 +6,6 @@
     - "{{ rest_private_dir }}/conf/release.yml"
 
   vars:
-    - install_progressivecactus: true
     - PERL_RC: "{{ ensembl_install_dir }}/activate_ensembl"
       
   environment:

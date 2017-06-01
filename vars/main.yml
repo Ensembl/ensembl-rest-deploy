@@ -6,3 +6,4 @@ ensembl_install_dir: "{{ homedir }}/src"
 
 hdf5_version: 1.8.18
 install_hdf5: true
+install_progressivecactus: true
