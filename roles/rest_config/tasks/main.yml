@@ -22,11 +22,11 @@
 
 # Special parameters for GRCh37
 - name: ga4gh featues config (local)
-  local_action: template src="{{ rest_private_dir }}/conf/ga_features.json.j2", dest="{{ rest_private_dir }}/conf/ga_features_{{ human_assembly }}.json" mode=0640
+  local_action: template src="{{ rest_private_dir }}/conf/ga_features.json.j2" dest="{{ rest_private_dir }}/conf/ga_features_{{ human_assembly }}.json" mode=0640
   when: ga4gh_features_config is defined
 
 - name: ga4gh featues config (remote)
-  template src="{{ rest_private_dir }}/conf/ga_features_{{ human_assembly }}.json.j2", dest="{{ ga4gh_features_config }}" mode=0640
+  template: src="{{ rest_private_dir }}/conf/ga_features_{{ human_assembly }}.json.j2" dest="{{ ga4gh_features_config }}" mode=0640
   when: ga4gh_features_config is defined
 
 - name: Copy non-templated REST config files
