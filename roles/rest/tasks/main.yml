@@ -142,6 +142,7 @@
   with_items:
     - export PROGRESSIVE_CACTUS_DIR={{ PROGRESSIVE_CACTUS_DIR | default(PROGRESSIVE_CACTUS_DEFAULT) }}
     - export COMPARA_HAL_DIR={{ hal_file_dir }}
+  when: hal_file_dir is defined
 
 - name: Make progressiveCactus
   shell: ". {{ PERL_RC | default('~/.bashrc') }} && make"
@@ -155,3 +156,4 @@
   shell: ". {{ PERL_RC | default('~/.bashrc') }} && perl Makefile.PL && make"
   args:
     chdir: "{{ ensembl_install_dir }}/ensembl-compara/modules/Bio/EnsEMBL/Compara/HAL/HALXS"
+  when: install_progressivecactus is not defined and install_progressivecactus == false
