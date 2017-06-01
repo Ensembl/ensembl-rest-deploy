@@ -136,6 +136,7 @@
     backrefs=yes
     regexp='^PATH=({{ ensembl_install_dir }}/ensembl-compara/modules/Bio/EnsEMBL/Compara/HAL/HALXS/blib/arch/auto:?)?(.*)'
     line='PATH={{ ensembl_install_dir }}/ensembl-compara/modules/Bio/EnsEMBL/Compara/HAL/HALXS/blib/arch/auto:\2'
+  when: install_progressivecactus is defined and install_progressivecactus
 
 - name: Configure compara progressiveCactus
   lineinfile: dest="{{ PERL_RC | default('~/.bashrc') }}" line="{{ item }}"
@@ -156,4 +157,4 @@
   shell: ". {{ PERL_RC | default('~/.bashrc') }} && perl Makefile.PL && make"
   args:
     chdir: "{{ ensembl_install_dir }}/ensembl-compara/modules/Bio/EnsEMBL/Compara/HAL/HALXS"
-  when: install_progressivecactus is not defined and install_progressivecactus == false
+  when: install_progressivecactus is defined and install_progressivecactus

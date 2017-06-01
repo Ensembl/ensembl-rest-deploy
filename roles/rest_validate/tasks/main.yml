@@ -38,7 +38,7 @@
 
 - name: Checking eQTL file defined if installing HDF5
   fail: msg="install_hdf5 is true but eqtl_file is not defined"
-  when: install_hdf5 is defined and install_hdf5 == true and eqtl_file is not defined
+  when: install_hdf5 is defined and install_hdf5 and eqtl_file is not defined
 
 - name: Check eQTL file
   stat:  path="{{ eqtl_file }}" get_checksum=False get_md5=False
@@ -51,7 +51,7 @@
 
 - name: Checking HAL dir defined if installing progressiveCactus
   fail: msg="install_progressivecactus is true but hal_file_dir is not defined"
-  when: install_progressivecactus is defined and install_progressivecactus == true and eqtl_file is not defined
+  when: install_progressivecactus is defined and install_progressivecactus and eqtl_file is not defined
 
 - name: Check HAL dir
   stat: path="{{ hal_file_dir }}" get_checksum=False get_md5=False
