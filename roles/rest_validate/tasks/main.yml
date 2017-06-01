@@ -13,8 +13,6 @@
     - "{{ vep_plugin_dir }}"
     - "{{ vep_plugin_data_dir }}"
     - "{{ human_genotypes_dir }}"
-    - "{{ eqtl_file }}"
-    - "{{ hal_file_dir }}"
   register: release_dirs
 
 - name: Ensure the data directories exist
@@ -37,6 +35,32 @@
     - not item | skipped
     - item.stat.exists == false
   with_items: "{{ release_datafiles.results }}"
+
+- name: Checking eQTL file defined if installing HDF5
+  fail: msg="install_hdf5 is true but eqtl_file is not defined"
+  when: install_hdf5 is defined and install_hdf5 == true and eqtl_file is not defined
+
+- name: Check eQTL file
+  stat:  path="{{ eqtl_file }}" get_checksum=False get_md5=False
+  when: eqtl_file is defined
+  register: eqtl_file_stat
+
+- name: Ensure eQTL file exists
+  fail: msg="Datafile {{ eqtl_file }} doesn't exist"
+  when: eqtl_file is defined and eqtl_file_stat.stat.exists == false
+
+- name: Checking HAL dir defined if installing progressiveCactus
+  fail: msg="install_progressivecactus is true but hal_file_dir is not defined"
+  when: install_progressivecactus is defined and install_progressivecactus == true and eqtl_file is not defined
+
+- name: Check HAL dir
+  stat: path="{{ hal_file_dir }}" get_checksum=False get_md5=False
+  when: hal_file_dir is defined
+  register: hal_dir_stat
+
+- name: Ensure HAL dir exists
+  fail: msg="Datafile {{ hal_file_dir }} doesn't exist"
+  when: hal_file_dir is defined and hal_dir_stat.stat.exists == false
 
 - name: ga4gh features config (grch37 only)
   stat: path="{{ ga4gh_features_config }}" get_checksum=False get_md5=False
