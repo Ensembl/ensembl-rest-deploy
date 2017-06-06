@@ -6,6 +6,7 @@
     - { src: "{{ rest_private_dir }}/conf/ensembl_rest.conf.j2", dest: "{{ rest_private_dir }}/conf/ensembl_rest.conf" }
     - { src: "{{ rest_private_dir }}/conf/ensrest.psgi.j2", dest: "{{ rest_private_dir }}/conf/ensrest.psgi" }
     - { src: "{{ rest_private_dir }}/conf/ga_references.json.j2", dest: "{{ rest_private_dir }}/conf/ga_references_{{ human_assembly }}.json" }
+    - { src: "{{ rest_private_dir }}/conf/ga_features.json.j2", dest: "{{ rest_private_dir }}/conf/ga_features_{{ human_assembly }}.json" }
     - { src: "{{ rest_private_dir }}/conf/vcf_config.json.j2", dest: "{{ rest_private_dir }}/conf/vcf_config.json" }
     - { src: "{{ rest_private_dir }}/conf/vep_plugin_config.txt.j2", dest: "{{ rest_private_dir }}/conf/vep_plugin_config.txt" }
 #  when: release_loaded
@@ -16,16 +17,17 @@
     - { src: "{{ rest_private_dir }}/conf/ensembl_rest.conf.j2", dest: "{{ ensembl_install_dir }}/ensembl-rest/configurations/production/ensembl_rest.conf" }
     - { src: "{{ rest_private_dir }}/conf/ensrest.psgi.j2", dest: "{{ ensembl_install_dir }}/ensembl-rest/configurations/production/ensrest.psgi" }
     - { src: "{{ rest_private_dir }}/conf/ga_references.json.j2", dest: "{{ ga4gh_reference_config }}" }
+    - { src: "{{ rest_private_dir }}/conf/ga_features.json.j2", dest: "{{ ga4gh_features_config }}" }
     - { src: "{{ rest_private_dir }}/conf/{{ vcf_config_json }}", dest: "{{ vcf_config }}" }
     - { src: "{{ rest_private_dir }}/conf/vep_plugin_config.txt.j2", dest: "{{ vep_plugin_config }}" }
 #  when: release_loaded
 
 # Special parameters for GRCh37
-- name: ga4gh featues config (local)
+- name: ga4gh features config (local)
   local_action: template src="{{ rest_private_dir }}/conf/ga_features.json.j2" dest="{{ rest_private_dir }}/conf/ga_features_{{ human_assembly }}.json" mode=0640
   when: ga4gh_features_config is defined
 
-- name: ga4gh featues config (remote)
+- name: ga4gh features config (remote)
   template: src="{{ rest_private_dir }}/conf/ga_features_{{ human_assembly }}.json.j2" dest="{{ ga4gh_features_config }}" mode=0640
   when: ga4gh_features_config is defined
 
