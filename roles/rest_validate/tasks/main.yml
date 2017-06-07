@@ -95,6 +95,7 @@
 
 - name: Ensure human genotype directory exists (grch38 only)
   fail: msg="File {{ human_genotypes_dir }} doesn't exist"
-  when: 
-    - human_genotypes_dir_stat is defined
+  when:
+    - human_genotypes_dir is defined 
+    - human_genotypes_dir_stat != ""
     - human_genotypes_dir_stat.stat.exists == false
