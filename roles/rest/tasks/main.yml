@@ -108,7 +108,7 @@
 - name: Set progressiveCactus install if not exists
   set_fact:
     fetch_progressivecactus: true
-  when: progressivecactus_status is defined and progressivecactus_status.stat.exists == False
+  when: progressivecactus_status is defined and progressivecactus_status.stat is defined and progressivecactus_status.stat.exists == False
 
 - name: Install progressiveCactus repo
   git: repo="{{ item.repo }}" dest="{{ ensembl_install_dir }}/{{ item.dir }}" version="{{ item.version | default(ensembl_repo_version) }}" clone=yes recursive="{{ item.recursive | default('no') }}" force="{{ item.force | default('no') }}"
@@ -163,4 +163,4 @@
   shell: ". {{ PERL_RC | default('~/.bashrc') }} && perl Makefile.PL && make"
   args:
     chdir: "{{ ensembl_install_dir }}/ensembl-compara/modules/Bio/EnsEMBL/Compara/HAL/HALXS"
-  when: hal_file_dir is defined
+  when: hal_file_dir is defined and install_progressivecactus is defined and install_progressivecactus|bool
