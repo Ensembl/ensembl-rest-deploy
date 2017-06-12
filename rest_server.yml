@@ -1,20 +1,21 @@
 ---
 - hosts: all
-  sudo: True
+  become: false
   vars_files:
     - vars/main.yml
     - "{{ rest_private_dir }}/conf/release.yml"
 
   vars:
     - PERL_RC: "{{ ensembl_install_dir }}/activate_ensembl"
+    - validate_rest: true
       
   environment:
     HTSLIB_DIR: "{{ ensembl_install_dir}}/htslib"
 
   roles:
-    - { role: system, when: install_system is defined and install_system }
-    - { role: embassy, when: embassy_config is defined and embassy_config }
-    - { role: plenv, perl_version: 5.14.4, become: false, when: skip_install is not defined or skip_install == false }
+    - { role: system, become: true, when: install_system is defined and install_system|bool }
+    - { role: embassy, become: true, when: embassy_config is defined and embassy_config|bool }
+    - { role: plenv, perl_version: 5.14.4, become: false, when: skip_perl is not defined or skip_perl == false }
     - { role: rest, become: false, when: skip_install is not defined or skip_install == false }
     - { role: rest_config, become: false }
-    - { role: rest_validate, become: false }
+    - { role: rest_validate, become: false, when: validate_rest|bool }

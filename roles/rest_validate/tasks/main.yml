@@ -37,7 +37,7 @@
 - name: Checking eQTL file defined if installing HDF5
   fail: msg="install_hdf5 is true but eqtl_file is not defined"
   when: 
-    - install_hdf5 
+    - install_hdf5|bool
     - eqtl_file is undefined
 
 - name: Check eQTL file
@@ -54,7 +54,7 @@
 - name: Checking HAL dir defined if installing progressiveCactus
   fail: msg="install_progressivecactus is true but hal_file_dir is not defined"
   when: 
-   - install_progressivecactus==true
+   - install_progressivecactus is defined and install_progressivecactus|bool
    - hal_file_dir is not defined
 
 - name: Check HAL dir
