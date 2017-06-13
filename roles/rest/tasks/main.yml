@@ -163,4 +163,4 @@
   shell: ". {{ PERL_RC | default('~/.bashrc') }} && perl Makefile.PL && make"
   args:
     chdir: "{{ ensembl_install_dir }}/ensembl-compara/modules/Bio/EnsEMBL/Compara/HAL/HALXS"
-  when: hal_file_dir is defined
+  when: hal_file_dir is defined and install_progressivecactus is defined and install_progressivecactus|bool
