@@ -36,7 +36,9 @@
 
 - name: Checking eQTL file defined if installing HDF5
   fail: msg="install_hdf5 is true but eqtl_file is not defined"
-  when: install_hdf5 and eqtl_file is not defined
+  when: 
+    - install_hdf5|bool
+    - eqtl_file is undefined
 
 - name: Check eQTL file
   stat:  path="{{ eqtl_file }}" get_checksum=False get_md5=False
@@ -45,11 +47,15 @@
 
 - name: Ensure eQTL file exists
   fail: msg="Datafile {{ eqtl_file }} doesn't exist"
-  when: eqtl_file is defined and eqtl_file_stat.stat.exists == false
+  when: 
+    - eqtl_file is defined 
+    - eqtl_file_stat.stat.exists == false
 
 - name: Checking HAL dir defined if installing progressiveCactus
   fail: msg="install_progressivecactus is true but hal_file_dir is not defined"
-  when: install_progressivecactus is defined and install_progressivecactus and eqtl_file is not defined
+  when: 
+   - install_progressivecactus is defined and install_progressivecactus|bool
+   - hal_file_dir is not defined
 
 - name: Check HAL dir
   stat: path="{{ hal_file_dir }}" get_checksum=False get_md5=False
@@ -67,7 +73,9 @@
 
 - name: Ensure ga4gh features config exists (grch37 only)
   fail: msg="File {{ ga4gh_features_config}} doesn't exist"
-  when: ga4gh_features_config is defined and ga4gh_features.stat.exists == false
+  when: 
+    - ga4gh_features_config is defined 
+    - ga4gh_features.stat.exists == false
 
 - name: ga4gh compliance datafile (grch37 only)
   stat: path="{{ ga4gh_compliance_file }}" get_checksum=False get_md5=False
@@ -76,7 +84,9 @@
 
 - name: Ensure ga4gh compliance datafile exists (grch37 only)
   fail: msg="File {{ ga4gh_compliance_file }} doesn't exist"
-  when: ga4gh_compliance_file is defined and ga4gh_compliance.stat.exists == false
+  when: 
+    - ga4gh_compliance_file is defined
+    - ga4gh_compliance.stat.exists == false
 
 - name: human genotype directory (grch38 only)
   stat: path="{{ human_genotypes_dir }}" get_checksum=False get_md5=False
@@ -85,4 +95,7 @@
 
 - name: Ensure human genotype directory exists (grch38 only)
   fail: msg="File {{ human_genotypes_dir }} doesn't exist"
-  when: human_genotypes_dir_stat is defined and human_genotypes_dir_stat.stat.exists == false
+  when:
+    - human_genotypes_dir is defined 
+    - human_genotypes_dir_stat != ""
+    - human_genotypes_dir_stat.stat.exists == false

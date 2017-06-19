@@ -43,7 +43,7 @@
 #  when: ebi_perl is defined and ebi_perl == true
 
 - name: Configure ensembl environment
-  lineinfile: dest="{{ PERL_RC | default('~/.bashrc') }}" line="{{ item }}"
+  lineinfile: dest="{{ PERL_RC | default('~/.bashrc') }}" line="{{ item }}" create=yes
   with_items:
        - export HTSLIB_DIR={{ ensembl_install_dir}}/htslib
        - export PERL5LIB={{ ensembl_install_dir }}/ensembl-compara/modules:{{ ensembl_install_dir }}/ensembl-funcgen/modules:{{ ensembl_install_dir }}/ensembl-hdf5/modules:{{ ensembl_install_dir }}/ensembl-io/modules:{{ ensembl_install_dir }}/ensembl/modules:{{ ensembl_install_dir }}/ensembl-test/modules:{{ ensembl_install_dir }}/ensembl-variation/modules:{{ ensembl_install_dir }}/ensembl-vep/modules:{{ ensembl_install_dir }}/ensembl-rest/lib:{{ ensembl_install_dir }}/ensembl-git-tools/lib:{{ ensembl_install_dir }}/ensembl-hdf5/modules:{{ ensembl_install_dir }}/bioperl-live:$PERL5LIB

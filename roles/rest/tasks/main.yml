@@ -38,13 +38,13 @@
 - name: Set hdf5 install if lib does not exist
   set_fact:
     install_hdf5_from_src: true
-  when: hdf5_status.stat.exists == False and install_hdf5
+  when: hdf5_status.stat.exists == False and install_hdf5|bool
 
 - name: Download HDF5
   get_url:
     url: "https://support.hdfgroup.org/ftp/HDF5/current18/src/hdf5-{{ hdf5_version }}.tar.gz"
     dest: "{{ ensembl_install_dir }}/hdf5-{{ hdf5_version }}.tar.gz"
-  when: install_hdf5_from_src is defined and install_hdf5_from_src
+  when: install_hdf5_from_src is defined and install_hdf5_from_src|bool
 
 - name: Expand HDF5
   unarchive:
@@ -52,7 +52,7 @@
     dest: "{{ ensembl_install_dir }}"
     creates: "{{ ensembl_install_dir }}/hdf5-{{ hdf5_version }}/README.txt"
     copy: no
-  when: install_hdf5_from_src is defined and install_hdf5_from_src
+  when: install_hdf5_from_src is defined and install_hdf5_from_src|bool
 
 - name: Build HDF5
   shell: ". {{ PERL_RC | default('~/.bashrc') }} && {{ item }}"
@@ -64,7 +64,7 @@
     - make check
     - make install
     - make check-install
-  when: install_hdf5_from_src is defined and install_hdf5_from_src
+  when: install_hdf5_from_src is defined and install_hdf5_from_src|bool
 
 - name: Determine if HDF5 ensembl repo is installed
   stat:
@@ -74,7 +74,7 @@
 - name: Set ensembl hdf5 install if lib does not exist
   set_fact:
     install_ensembl_hdf5: true
-  when: ensembl_hdf5_status.stat.exists == False and install_hdf5
+  when: ensembl_hdf5_status.stat.exists == False and install_hdf5|bool
 
 - name: Install Ensembl HDF5 repo
   git: repo="{{ item.repo }}" dest="{{ ensembl_install_dir }}/{{ item.dir }}" version="{{ item.version | default(ensembl_repo_version) }}" clone=yes
@@ -103,12 +103,12 @@
   stat:
     path: "{{ ensembl_install_dir }}/progressiveCactus"
   register: progressivecactus_status
-  when: install_progressivecactus is defined and install_progressivecactus
+  when: install_progressivecactus is defined and install_progressivecactus|bool
 
 - name: Set progressiveCactus install if not exists
   set_fact:
     fetch_progressivecactus: true
-  when: progressivecactus_status is defined and progressivecactus_status.stat.exists == False
+  when: progressivecactus_status.stat is defined and progressivecactus_status.stat.exists == False
 
 - name: Install progressiveCactus repo
   git: repo="{{ item.repo }}" dest="{{ ensembl_install_dir }}/{{ item.dir }}" version="{{ item.version | default(ensembl_repo_version) }}" clone=yes recursive="{{ item.recursive | default('no') }}" force="{{ item.force | default('no') }}"
@@ -123,7 +123,7 @@
     backrefs=yes
     regexp='^cflags_opt =( -fPIC)? (.*)'
     line='cflags_opt = -fPIC \2'
-  when: install_progressivecactus is defined and install_progressivecactus
+  when: install_progressivecactus is defined and install_progressivecactus|bool
 
 - name: Set progressiveCactus default path
   set_fact:
@@ -157,10 +157,10 @@
     chdir: "{{ ensembl_install_dir }}/progressiveCactus"
   environment:
     CFLAGS: -std=c99
-  when: install_progressivecactus
+  when: install_progressivecactus is defined and install_progressivecactus|bool
 
 - name: Make Compara progressiveCactus bindings
   shell: ". {{ PERL_RC | default('~/.bashrc') }} && perl Makefile.PL && make"
   args:
     chdir: "{{ ensembl_install_dir }}/ensembl-compara/modules/Bio/EnsEMBL/Compara/HAL/HALXS"
-  when: hal_file_dir is defined
+  when: hal_file_dir is defined and install_progressivecactus is defined and install_progressivecactus|bool

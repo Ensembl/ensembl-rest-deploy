@@ -21,18 +21,18 @@
 #  when: release_loaded
 
 # Special parameters for GRCh37
-- name: ga4gh featues config (local)
+- name: ga4gh features config (local)
   local_action: template src="{{ rest_private_dir }}/conf/ga_features.json.j2" dest="{{ rest_private_dir }}/conf/ga_features_{{ human_assembly }}.json" mode=0640
   when: ga4gh_features_config is defined
 
-- name: ga4gh featues config (remote)
-  template: src="{{ rest_private_dir }}/conf/ga_features_{{ human_assembly }}.json.j2" dest="{{ ga4gh_features_config }}" mode=0640
+- name: ga4gh features config (remote)
+  template: src="{{ rest_private_dir }}/conf/ga_features.json.j2" dest="{{ ga4gh_features_config|default('') }}" mode=0640
   when: ga4gh_features_config is defined
 
 - name: Copy non-templated REST config files
   copy: src="{{ item.src }}" dest="{{ item.dest }}" mode=0640
   with_items:
-    - { src: "{{ rest_private_dir }}/conf/ga_vcf_config.json", dest: "{{ ga4gh_config }}" }
+    - { src: "{{ rest_private_dir }}/conf/ga_vcf_config_{{ human_assembly }}.json", dest: "{{ ga4gh_config }}" }
 
 - name: Deal with password not being required
   lineinfile:
