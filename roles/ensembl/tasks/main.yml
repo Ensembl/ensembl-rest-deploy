@@ -77,5 +77,4 @@
        - ensembl
        - ensembl-compara
        - ensembl-variation
-       - ensembl-git-tools
   when: repos_exist
