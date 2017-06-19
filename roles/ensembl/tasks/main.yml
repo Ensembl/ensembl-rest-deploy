@@ -75,4 +75,7 @@
     chdir="{{ ensembl_install_dir }}/{{ item }}"
   with_items:
        - ensembl
+       - ensembl-compara
+       - ensembl-variation
+       - ensembl-git-tools
   when: repos_exist
