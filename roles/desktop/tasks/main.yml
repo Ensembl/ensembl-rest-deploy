@@ -83,8 +83,9 @@
 - name: Create user convenience symlinks
   file: dest="{{ item.dest }}" src="{{ item.src }}" state=link mode=0755 force=yes owner="{{ ensembl_user }}" group="{{ ensembl_group }}"
   with_items:
-    - { dest: "{{ homedir }}/VEP", src: "{{ ensembl_install_dir }}/ensembl-tools/scripts/variant_effect_predictor/" }
+    - { dest: "{{ homedir }}/VEP", src: "{{ ensembl_install_dir }}/ensembl-vep/" }
     - { dest: "{{ homedir }}/Desktop/ensembl-api-folder", src: "{{ ensembl_install_dir }}/" }
+    - { dest: "{{ homedir }}/ensembl-api-folder", src: "{{ ensembl_install_dir }}/" }
     - { dest: "{{ homedir }}/verify_installation", src: "{{ ensembl_install_dir }}/ensembl/misc-scripts/ping_ensembl.pl" }
   ignore_errors: true
   when: desktop_dir_created
