@@ -132,3 +132,9 @@
 
 - name: Compile the schema for launcher changes
   shell: glib-compile-schemas /usr/share/glib-2.0/schemas/
+
+- name: Add ensembl user to vboxsf
+  user:
+    name: "{{ ensembl_user }}"
+    groups: vboxsf
+    append: yes
