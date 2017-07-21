@@ -51,3 +51,9 @@
     - { path: "/mnt/data", src: "192.168.0.60:/mnt/data/grch38", fstype: "nfs", opts: "soft,tcp,rsize=8192,wsize=8192,noexec,nosuid" }
     - { path: "/mnt/shared", src: "em-isi-3107.ebi.ac.uk:/ifs/Swift/swift-ensembl", fstype: "nfs", opts: "rw,soft,tcp,rsize=8192,wsize=8192,nosuid,noatime" }
   when: dnsmasq_configured
+
+- systemd:
+    name: apt-daily
+    masked: yes
+    enabled: no
+    daemon_reload: yes
