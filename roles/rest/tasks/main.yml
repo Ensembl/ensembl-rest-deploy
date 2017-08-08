@@ -42,7 +42,7 @@
 
 - name: Download HDF5
   get_url:
-    url: "https://support.hdfgroup.org/ftp/HDF5/current18/src/hdf5-{{ hdf5_version }}.tar.gz"
+    url: "https://support.hdfgroup.org/ftp/HDF5/prev-releases/hdf5-1.8/hdf5-1.8.18/src/hdf5-1.8.18.tar.gz"
     dest: "{{ ensembl_install_dir }}/hdf5-{{ hdf5_version }}.tar.gz"
   when: install_hdf5_from_src is defined and install_hdf5_from_src|bool
 
@@ -73,14 +73,14 @@
 
 - name: Set ensembl hdf5 install if lib does not exist
   set_fact:
-    install_ensembl_hdf5: true
-  when: ensembl_hdf5_status.stat.exists == False and install_hdf5|bool
+    do_ensembl_hdf5: true
+  when: ensembl_hdf5_status.stat.exists == False and install_ensembl_hdf5|bool
 
 - name: Install Ensembl HDF5 repo
   git: repo="{{ item.repo }}" dest="{{ ensembl_install_dir }}/{{ item.dir }}" version="{{ item.version | default(ensembl_repo_version) }}" clone=yes
   with_items:
        - { repo: 'https://github.com/Ensembl/ensembl-hdf5.git', dir: ensembl-hdf5, version: master }
-  when: install_ensembl_hdf5 is defined and install_ensembl_hdf5
+  when: do_ensembl_hdf5 is defined and do_ensembl_hdf5
 
 - name: Tune ensembl HDF5 makefiles
   lineinfile:

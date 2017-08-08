@@ -40,26 +40,6 @@
     state=absent
     regexp="^\s*pass"
   when: db_pass is not defined
-    
-#- name: Add perl env variables to startup script
-#  blockinfile:
-#    dest: "{{ ensembl_install_dir }}/ensembl-rest/bin/production/start_rest_server.sh"
-#    marker: "# {mark} Ansible Perl Paths"
-#    content: |
-#      source {{ PERL_RC | default('~/.bashrc') }}
-
-#- name: Change activation file
-#  lineinfile:
-#    dest="{{ ensembl_install_dir }}/ensembl-rest/bin/production/start_rest_server.sh"
-#    state=present
-#    regexp='perlbrew/etc/bashrc$'
-#    line=". {{ PERL_RC | default('~/.bashrc') }}"
-
-- name: Set log4perl file to use
-  lineinfile:
-    dest="{{ PERL_RC | default('~/.bashrc') }}"
-    line="export ENS_REST_LOG4PERL={{ ensembl_install_dir }}/ensembl-rest/configurations/production/log4perl.conf"
-  when: rest_log_root is defined
 
 - name: Set status file if available
   lineinfile:
@@ -110,7 +90,6 @@
   lineinfile:
     dest="{{ PERL_RC | default('~/.bashrc') }}"
     line="export ENS_REST_LOG4PERL={{ ENSEMBL_REST_LOG4PERL | default(ens_log4perl) }}"
-  when: ENSEMBL_REST_MAX_REQUESTS is defined
 
 - name: Set TDP_HOME for Catalyst
   lineinfile:

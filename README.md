@@ -77,12 +77,22 @@ ansible-playbook -e "rest_private_dir=$REPO_HOME/ensembl-rest_private/rest.ensem
 Build with installing the system packages and configuring the Embassy OpenStack environment:
 
 ```
-ansible-playbook -e "rest_private_dir=$REPO_HOME/ensembl-rest_private/rest.ensembl.org ensembl_repo_version=release/87 install_system=True embassy_config=True homedir=/home/ubuntu ensembl_user=ubuntu" -i "192.168.0.141," rest_server.yml
+ansible-playbook -e "rest_private_dir=$REPO_HOME/ensembl-rest_private/rest.ensembl.org ensembl_repo_version=release/87 install_system=True embassy_config=True ensembl_user=ubuntu" -i "192.168.0.141," rest_server.yml
 ```
 
 If you need to only rerun the validation and configuration steps add `skip_install=True` to the variables in -e, and remove the `install_system=True embassy_config=True` (if used).
 
-For GRCh37, there is no eQTL or HAL data, `install_hdf5=False install_progressivecactus=False` need to be set on the command line.
+For GRCh37, there is no eQTL or HAL data, `install_hdf5=False install_ensembl_hdf5=False install_progressivecactus=False` need to be set on the command line.
+
+## Running locally
+
+Occationally you may need to run the playbook directly on the deployment host, rather than sshing to the host. This can be achieved using the options
+
+```
+ansible-playbook --connection=local -i "localhost,"
+```
+
+as part of your Ansible command line.
 
 # Building the Ensembl VM
 
