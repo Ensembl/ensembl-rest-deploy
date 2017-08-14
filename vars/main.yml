@@ -2,6 +2,7 @@ ensembl_user: ensembl
 ensembl_group: ensembl
 logdir: "/home/{{ ensembl_user }}/log"
 ensembl_install_dir: "/home/{{ ensembl_user }}/src"
+homedir: "/home/{{ ensembl_user }}"
 
 install_hdf5: true
 install_ensembl_hdf5: true
