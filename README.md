@@ -6,11 +6,8 @@ You need the following repos checked out:
 
 * [ensembl-rest-deploy](https://github.com/Ensembl/ensembl-rest-deploy)
 * [ensembl-rest_private](https://github.com/Ensembl/ensembl-rest_private)
-* [lairdm/ansible-perlbrew](https://github.com/lairdm/ansible-perlbrew)
 
 The shell variable REPO_HOME should point to where these repos are checked out.
-
-ansible-perlbrew should be inside the root of ensembl-rest-deploy.
 
 ## Create VM
 
