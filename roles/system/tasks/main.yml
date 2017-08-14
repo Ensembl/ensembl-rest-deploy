@@ -19,6 +19,7 @@
        - libbz2-dev
        - python-pip
        - virtualenv
+       - libssl-dev
   when: ansible_os_family == 'Debian'
 
 # Not yet tested on a RH based system
@@ -37,6 +38,7 @@
        - libbz2-devel
        - python-pip
        - python-virtualenv
+       - openssl-devel
   when: ansible_os_family == 'RedHat'
 
 # Deal with an ubuntu specific bug with perl

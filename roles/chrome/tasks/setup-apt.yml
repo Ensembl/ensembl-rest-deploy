@@ -1,6 +1,11 @@
 # apt tasks file for ansible-role-chrome
 # via http://linuxg.net/how-to-install-google-chrome-42-stable-on-the-most-popular-linux-systems-via-the-official-google-repository/
 
+- name: "Upgrade pyOpenSSL if possible, because of Ansible using too new a version compared to distro"
+  pip:
+    name: pyopenssl
+    state: forcereinstall
+
 - name: "apt | ensure Google linux signing key present"
   apt_key: url=https://dl-ssl.google.com/linux/linux_signing_key.pub state=present
 
