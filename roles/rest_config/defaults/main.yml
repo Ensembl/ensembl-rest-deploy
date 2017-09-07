@@ -1,3 +1,4 @@
 ---
 
+ga_vcf_config_json: ga_vcf_config.json.j2
 vcf_config_json: vcf_config.json.j2

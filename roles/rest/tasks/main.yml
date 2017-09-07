@@ -42,7 +42,7 @@
 
 - name: Download HDF5
   get_url:
-    url: "https://support.hdfgroup.org/ftp/HDF5/prev-releases/hdf5-1.8/hdf5-1.8.18/src/hdf5-1.8.18.tar.gz"
+    url: "https://support.hdfgroup.org/ftp/HDF5/prev-releases/hdf5-1.8/hdf5-1.8.18/src/hdf5-{{ hdf5_version }}.tar.gz"
     dest: "{{ ensembl_install_dir }}/hdf5-{{ hdf5_version }}.tar.gz"
   when: install_hdf5_from_src is defined and install_hdf5_from_src|bool
 

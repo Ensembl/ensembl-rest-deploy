@@ -13,6 +13,7 @@
     PROGRESSIVE_CACTUS_DIR: "{{ SHARED_PATH }}/paths/progressiveCactusFake/"
     install_progressivecactus: false
     vcf_config_json: vcf_config_ebi.json.j2
+    ga_vcf_config_json: ga_vcf_config_ebi.json.j2
     validate_rest: true
 
   environment:
