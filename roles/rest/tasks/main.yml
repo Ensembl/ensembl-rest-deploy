@@ -160,7 +160,5 @@
   when: install_progressivecactus is defined and install_progressivecactus|bool
 
 - name: Make Compara progressiveCactus bindings
-  shell: ". {{ PERL_RC | default('~/.bashrc') }} && perl Makefile.PL && make"
-  args:
-    chdir: "{{ ensembl_install_dir }}/ensembl-compara/modules/Bio/EnsEMBL/Compara/HAL/HALXS"
+  include: comparahal.yml
   when: hal_file_dir is defined and install_progressivecactus is defined and install_progressivecactus|bool
