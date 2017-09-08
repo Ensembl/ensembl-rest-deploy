@@ -11,7 +11,7 @@
   when: HAL_Makefile.stdout.find('PROGRESSIVE_CACTUS_DIR') != -1
 
 - name: Make the Compara progressiveCactus HAL XS bindings, new way
-  shell: ". {{ PERL_RC | default('~/.bashrc') }} && perl Makefile.PL {{ PROGRESSIVE_CACTUS_DIR | default(PROGRESSIVE_CACTUS_DEFAULT) }}/hdf5 {{ PROGRESSIVE_CACTUS_DIR | default(PROGRESSIVE_CACTUS_DEFAULT) }}/sonlib {{ PROGRESSIVE_CACTUS_DIR | default(PROGRESSIVE_CACTUS_DEFAULT) }} hal && make"
+  shell: ". {{ PERL_RC | default('~/.bashrc') }} && perl Makefile.PL {{ PROGRESSIVE_CACTUS_DIR | default(PROGRESSIVE_CACTUS_DEFAULT) }}/hdf5 {{ PROGRESSIVE_CACTUS_DIR | default(PROGRESSIVE_CACTUS_DEFAULT) }}/sonlib {{ PROGRESSIVE_CACTUS_DIR | default(PROGRESSIVE_CACTUS_DEFAULT) }}/hal && make"
   args:
     chdir: "{{ ensembl_install_dir }}/ensembl-compara/modules/Bio/EnsEMBL/Compara/HAL/HALXS"
   when: HAL_Makefile.stdout.find('Need to run this makefile with 3 paths') != -1
