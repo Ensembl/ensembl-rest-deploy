@@ -25,7 +25,7 @@
 
   roles:
     - { role: ebi_brew, become: false }
-    - { role: plenv, perl_version: 5.14.3, plenv_install_dir: "{{ ensembl_install_dir }}/.plenv" }
+    - { role: plenv, perl_version: 5.14.4, plenv_install_dir: "{{ ensembl_install_dir }}/.plenv" }
     - { role: rest, become: false }
     - { role: rest_config, become: false }
     - { role: rest_validate, become: false, when: validate_rest|bool }
