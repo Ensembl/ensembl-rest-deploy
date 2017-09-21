@@ -126,6 +126,6 @@
     dest: "{{ item.dest }}"
     mode: 0644
   with_items:
-    - { src: "{{ rest_private_dir }}/static/wrapper.tt" dest: "{{ ensembl_install_dir }}/ensembl-rest/root/wrapper.tt" }
-    - { src: "{{ rest_private_dir }}/static/10-bootstrap.css" dest: "{{ ensembl_install_dir }}/ensembl-rest/root/static/css/10-bootstrap.css" }
+    - { src: "{{ rest_private_dir }}/static/wrapper.tt", dest: "{{ ensembl_install_dir }}/ensembl-rest/root/wrapper.tt" }
+    - { src: "{{ rest_private_dir }}/static/10-bootstrap.css", dest: "{{ ensembl_install_dir }}/ensembl-rest/root/static/css/10-bootstrap.css" }
   when: human_assembly == "GRCh37"
