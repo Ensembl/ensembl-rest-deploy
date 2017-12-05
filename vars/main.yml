@@ -6,6 +6,7 @@ homedir: "/home/{{ ensembl_user }}"
 
 install_hdf5: true
 install_ensembl_hdf5: true
+install_my_own_hdf5: true
 hdf5_version: 1.8.18
 install_progressivecactus: true
 validate_rest: true
