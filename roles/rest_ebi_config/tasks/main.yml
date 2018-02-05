@@ -24,6 +24,7 @@
   copy: src="{{ item.src }}" dest="{{ item.dest }}" mode=0640
   with_items:
     - { src: "{{ rest_private_dir }}/conf/ga_vcf_config_GRCh{{ ensembl_sub_release }}.json", dest: "{{ ga4gh_config }}" }
+    - { src: "{{ rest_private_dir }}/conf/log4perl.conf", dest: "{{ ensembl_install_dir }}/ensembl-rest/configurations/production/log4perl.conf" }
 
 - name: Add perl env variables to startup script
   blockinfile:
