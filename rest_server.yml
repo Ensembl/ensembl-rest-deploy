@@ -7,7 +7,6 @@
 
   vars:
     - PERL_RC: "{{ ensembl_install_dir }}/activate_ensembl"
-    - validate_rest: true
       
   environment:
     HTSLIB_DIR: "{{ ensembl_install_dir}}/htslib"
@@ -18,4 +17,4 @@
     - { role: plenv, perl_version: 5.14.4, become: false, when: skip_perl is not defined or skip_perl == false }
     - { role: rest, become: false, when: skip_install is not defined or skip_install == false }
     - { role: rest_config, become: false }
-    - { role: rest_validate, become: false, when: validate_rest|bool }
+    - { role: rest_validate, become: false, when: validate_rest is defined and validate_rest|bool }

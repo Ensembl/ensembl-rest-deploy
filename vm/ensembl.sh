@@ -14,7 +14,7 @@
 # limitations under the License.
 
 # Ensembl release tag to install
-REPO=release/90
+REPO=release/92
 
 # We need basic build tools for ansible
 apt-get install -y build-essential libssl-dev libffi-dev python-pip git
