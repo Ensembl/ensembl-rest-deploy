@@ -63,5 +63,6 @@
   with_items:
        - ensembl
        - ensembl-compara
+       - ensembl-funcgen
        - ensembl-variation
   when: repos_exist
