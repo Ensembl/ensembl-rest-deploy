@@ -24,7 +24,7 @@
        - { repo: 'https://github.com/Ensembl/VEP_plugins.git', dir: VEP_plugins }
        - { repo: 'https://github.com/Ensembl/ensembl-funcgen.git', dir: ensembl-funcgen }
        - { repo: 'https://github.com/Ensembl/ensembl-io.git', dir: ensembl-io }
-       - { repo: 'https://github.com/bioperl/bioperl-live.git', dir: bioperl-live,  version: bioperl-release-1-6-1 }
+       - { repo: 'https://github.com/bioperl/bioperl-live.git', dir: bioperl-live,  version: release-1-6-924 }
        - { repo: 'https://github.com/samtools/htslib.git', dir: htslib, version: 'master' }
   when: ensembl_dir_exists
   register: repos_exist
