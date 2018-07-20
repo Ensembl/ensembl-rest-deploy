@@ -93,11 +93,13 @@
     - { dest: "{{ ensembl_install_dir }}/ensembl-hdf5/c/Makefile", regexp: "^LIB_PATHS=(-L{{ ensembl_install_dir }}/local/lib )?(.*)", line: "LIB_PATHS=-L{{ ensembl_install_dir }}/local/lib \\2" }
     - { dest: "{{ ensembl_install_dir }}/ensembl-hdf5/xs/Makefile.PL", regexp: "(.*)-L/usr/lib(.*)", line: "\\1-L{{ ensembl_install_dir }}/local/lib\\2" }
     - { dest: "{{ ensembl_install_dir }}/ensembl-hdf5/xs/Makefile.PL", regexp: "(.*)-I/usr/include('.*)", line: "\\1-I{{ ensembl_install_dir }}/local/include\\2" }
+  when: do_ensembl_hdf5 is defined and do_ensembl_hdf5
 
 - name: Make Ensembl HDF5
   shell: ". {{ PERL_RC | default('~/.bashrc') }} && make"
   args:
     chdir: "{{ ensembl_install_dir }}/ensembl-hdf5"
+  when: do_ensembl_hdf5 is defined and do_ensembl_hdf5
     
 - name: Determine if progressiveCactus repo exists
   stat:
