@@ -9,11 +9,9 @@
     PERL_RC: "{{ ensembl_install_dir }}/activate_ensembl"
     LANG: C
     SHARED_PATH: "{{ ensembl_install_dir }}"
-    PROGRESSIVE_CACTUS_DIR: "{{ SHARED_PATH }}/paths/progressiveCactusFake/"
     install_my_own_hdf5: false
     install_ensembl_hdf5: false
     install_hdf5: false
-    do_ensembl_hdf5: false
     install_progressivecactus: false
     vcf_config_json: vcf_config_ebi.json.j2
     ga_vcf_config_json: ga_vcf_config_ebi.json.j2
