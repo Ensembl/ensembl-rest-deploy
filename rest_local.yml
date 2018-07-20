@@ -1,0 +1,26 @@
+---
+- hosts: all
+  become: false
+  vars_files:
+    - vars/main_local.yml
+    - "{{ rest_private_dir }}/conf/release_ebi.yml"
+
+  vars:
+    PERL_RC: "{{ ensembl_install_dir }}/activate_ensembl"
+    LANG: C
+    SHARED_PATH: "{{ ensembl_install_dir }}"
+    install_my_own_hdf5: false
+    install_ensembl_hdf5: false
+    install_hdf5: false
+    install_progressivecactus: false
+    vcf_config_json: vcf_config_ebi.json.j2
+    ga_vcf_config_json: ga_vcf_config_ebi.json.j2
+
+  environment:
+    HTSLIB_DIR: "{{ ensembl_install_dir}}/htslib"
+  
+  roles:
+    - { role: plenv, perl_version: 5.26.1, plenv_install_dir: "{{ ensembl_install_dir }}/.plenv" }
+    - { role: rest, become: false }
+    - { role: rest_config, become: false }
+    - { role: rest_validate, become: false, when: validate_rest is defined and validate_rest|bool }

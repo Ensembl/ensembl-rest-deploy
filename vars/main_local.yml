@@ -1,0 +1,8 @@
+ensembl_user: $USER
+ensembl_group: ensembl
+ensembl_install_dir: "/home/{{ ensembl_user }}/src"
+logdir: "{{ ensembl_install_dir }}/log"
+homedir: "/home/{{ ensembl_user }}"
+
+hdf5_version: 1.8.18
+validate_rest: false
