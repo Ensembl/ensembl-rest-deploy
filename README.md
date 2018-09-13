@@ -117,9 +117,10 @@ and change the repo variable to the git tag to use for all Ensembl repos, eg.
 REPO=release/88
 ```
 
-Then simply run the packer script using the custom configuration from ensembl-rest-deploy:
+Then simply run the packer script using the basic Ubuntu template from boxcutter and the custom configuration from ensembl-rest-deploy:
 
 ```
+cd /path/to/boxcutter/dir
 packer build -only=virtualbox-iso -var-file=${DEPLOY_BASE}/ensembl.json -var "version=${RELEASE}" -var "custom_script=${DEPLOY_BASE}/ensembl.sh" -var "vagrantfile_template=${DEPLOY_BASE}/vagrantfile-ensembl.tpl" ubuntu.json
 ```
 
