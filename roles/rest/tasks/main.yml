@@ -4,7 +4,7 @@
   file: path="{{ item }}" state=directory mode=0755
   with_items:
     - "{{ ensembl_install_dir }}"
-    - "{{ logdir }}"
+#    - "{{ logdir }}"
   register: rest_dir_exists
 
 - name: Install REST repos
