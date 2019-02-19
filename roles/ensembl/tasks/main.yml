@@ -4,7 +4,7 @@
   file: path="{{ item }}" state=directory mode=0755
   with_items:
     - "{{ ensembl_install_dir }}"
-    - "{{ logdir }}"
+#    - "{{ logdir }}"
   register: ensembl_dir_exists
 
 - name: Find git
@@ -26,6 +26,8 @@
        - { repo: 'https://github.com/Ensembl/ensembl-io.git', dir: ensembl-io }
        - { repo: 'https://github.com/bioperl/bioperl-live.git', dir: bioperl-live,  version: release-1-6-924 }
        - { repo: 'https://github.com/samtools/htslib.git', dir: htslib, version: 'master' }
+       - { repo: 'https://github.com/Ensembl/ensembl-metadata.git', dir: ensembl-metadata }
+       - { repo: 'https://github.com/Ensembl/ensembl-taxonomy.git', dir: ensembl-taxonomy, version: 'master' }
   when: ensembl_dir_exists
   register: repos_exist
 
@@ -33,7 +35,7 @@
   lineinfile: dest="{{ PERL_RC | default('~/.bashrc') }}" line="{{ item }}" create=yes
   with_items:
        - export HTSLIB_DIR={{ ensembl_install_dir}}/htslib
-       - export PERL5LIB={{ ensembl_install_dir }}/ensembl-compara/modules:{{ ensembl_install_dir }}/ensembl-funcgen/modules:{{ ensembl_install_dir }}/ensembl-hdf5/modules:{{ ensembl_install_dir }}/ensembl-io/modules:{{ ensembl_install_dir }}/ensembl/modules:{{ ensembl_install_dir }}/ensembl-test/modules:{{ ensembl_install_dir }}/ensembl-variation/modules:{{ ensembl_install_dir }}/ensembl-vep/modules:{{ ensembl_install_dir }}/ensembl-rest/lib:{{ ensembl_install_dir }}/ensembl-git-tools/lib:{{ ensembl_install_dir }}/ensembl-hdf5/modules:{{ ensembl_install_dir }}/bioperl-live:$PERL5LIB
+       - export PERL5LIB={{ ensembl_install_dir }}/ensembl-metadata/modules:{{ ensembl_install_dir }}/ensembl-taxonomy/modules:{{ ensembl_install_dir }}/ensembl-compara/modules:{{ ensembl_install_dir }}/ensembl-funcgen/modules:{{ ensembl_install_dir }}/ensembl-hdf5/modules:{{ ensembl_install_dir }}/ensembl-io/modules:{{ ensembl_install_dir }}/ensembl/modules:{{ ensembl_install_dir }}/ensembl-test/modules:{{ ensembl_install_dir }}/ensembl-variation/modules:{{ ensembl_install_dir }}/ensembl-vep/modules:{{ ensembl_install_dir }}/ensembl-rest/lib:{{ ensembl_install_dir }}/ensembl-git-tools/lib:{{ ensembl_install_dir }}/ensembl-hdf5/modules:{{ ensembl_install_dir }}/bioperl-live:$PERL5LIB
        - export PATH={{ ensembl_install_dir }}/ensembl-git-tools/bin:{{ ensembl_install_dir }}/ensembl-git-tools/advanced_bin:{{ ensembl_install_dir }}/ensembl-variation/C_code:{{ ensembl_install_dir }}/htslib:$PATH
   when: repos_exist
   register: paths_set
