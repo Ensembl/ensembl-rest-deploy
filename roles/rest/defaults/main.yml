@@ -2,3 +2,4 @@ install_my_own_hdf5: true
 install_progressivecactus: true
 install_hdf5: true
 install_ensembl_hdf5: true
+compara_halxs_makefile: Makefile.PL

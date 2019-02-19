@@ -1,18 +1,24 @@
 # Role: rest/comparahal
 
 - name: Read the Compara HAL XS Makefile.PL
-  shell: cat {{ ensembl_install_dir }}/ensembl-compara/modules/Bio/EnsEMBL/Compara/HAL/HALXS/Makefile.PL
+  shell: cat {{ ensembl_install_dir }}/ensembl-compara/modules/Bio/EnsEMBL/Compara/HAL/HALXS/{{ compara_halxs_makefile }}
   register: HAL_Makefile
 
 - name: Make the Compara progressiveCactus HAL XS bindings, old way
-  shell: ". {{ PERL_RC | default('~/.bashrc') }} && perl Makefile.PL && make"
+  shell: ". {{ PERL_RC | default('~/.bashrc') }} && perl {{ compara_halxs_makefile }} && make"
   args:
     chdir: "{{ ensembl_install_dir }}/ensembl-compara/modules/Bio/EnsEMBL/Compara/HAL/HALXS"
   when: HAL_Makefile.stdout.find('PROGRESSIVE_CACTUS_DIR') != -1
 
 - name: Make the Compara progressiveCactus HAL XS bindings, new way
-  shell: ". {{ PERL_RC | default('~/.bashrc') }} && perl Makefile.PL {{ PROGRESSIVE_CACTUS_DIR | default(PROGRESSIVE_CACTUS_DEFAULT) }}/submodules/hdf5 {{ PROGRESSIVE_CACTUS_DIR | default(PROGRESSIVE_CACTUS_DEFAULT) }}/submodules/sonLib {{ PROGRESSIVE_CACTUS_DIR | default(PROGRESSIVE_CACTUS_DEFAULT) }}/submodules/hal && make"
+  shell: ". {{ PERL_RC | default('~/.bashrc') }} && {{ compara_halxs_makefile }} {{ PROGRESSIVE_CACTUS_DIR | default(PROGRESSIVE_CACTUS_DEFAULT) }}/submodules/hdf5 {{ PROGRESSIVE_CACTUS_DIR | default(PROGRESSIVE_CACTUS_DEFAULT) }}/submodules/sonLib {{ PROGRESSIVE_CACTUS_DIR | default(PROGRESSIVE_CACTUS_DEFAULT) }}/submodules/hal && make"
   args:
     chdir: "{{ ensembl_install_dir }}/ensembl-compara/modules/Bio/EnsEMBL/Compara/HAL/HALXS"
   when: HAL_Makefile.stdout.find('Need to run this makefile with 3 paths') != -1
+
+- name: Make the Compara progressiveCactus HAL XS bindings, the linuxbrew way
+  shell: ". {{ PERL_RC | default('~/.bashrc') }} && {{ compara_halxs_makefile }} {{ linuxbrew_home }} && make"
+  args:
+    chdir: "{{ ensembl_install_dir }}/ensembl-compara/modules/Bio/EnsEMBL/Compara/HAL/HALXS"
+  when: HAL_Makefile.stdout.find('The path to the linuxbrew installation must be provided') != -1
 
