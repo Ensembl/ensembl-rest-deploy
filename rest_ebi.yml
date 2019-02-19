@@ -3,7 +3,8 @@
   become: false
   vars_files:
     - vars/main.yml
-    - "{{ rest_private_dir }}/conf/release_ebi.yml"
+    - "{{ rest_private_dir }}/conf/release_ebi_common.yml"
+    - "{{ rest_private_dir }}/conf/release_ebi_{{ deploy_conf | default('live') }}.yml"
 
   vars:
     PERL_RC: "{{ ensembl_install_dir }}/activate_ensembl"
@@ -15,6 +16,7 @@
     install_progressivecactus: false
     vcf_config_json: vcf_config_ebi.json.j2
     ga_vcf_config_json: ga_vcf_config_ebi.json.j2
+    compara_halxs_makefile: Makefile-Linuxbrew.PL
 
   environment:
     HTSLIB_DIR: "{{ ensembl_install_dir}}/htslib"
