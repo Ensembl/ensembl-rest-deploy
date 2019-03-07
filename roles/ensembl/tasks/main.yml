@@ -66,5 +66,5 @@
        - ensembl
        - ensembl-compara
        - ensembl-funcgen
-       - ensembl-variation
+#       - ensembl-variation
   when: repos_exist
