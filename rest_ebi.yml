@@ -17,6 +17,7 @@
     vcf_config_json: vcf_config_ebi.json.j2
     ga_vcf_config_json: ga_vcf_config_ebi.json.j2
     compara_halxs_makefile: Makefile-Linuxbrew.PL
+    fix_catalyst_root_dir: true
 
   environment:
     HTSLIB_DIR: "{{ ensembl_install_dir}}/htslib"
