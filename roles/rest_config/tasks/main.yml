@@ -129,3 +129,9 @@
     - { src: "{{ rest_private_dir }}/static/wrapper.tt", dest: "{{ ensembl_install_dir }}/ensembl-rest/root/wrapper.tt" }
     - { src: "{{ rest_private_dir }}/static/10-bootstrap.css", dest: "{{ ensembl_install_dir }}/ensembl-rest/root/static/css/10-bootstrap.css" }
   when: human_assembly == "GRCh37"
+
+- name: Fix ROOT directory for unusual filesystems
+  lineinfile:
+    dest="{{ PERL_RC | default('~/.bashrc') }}"
+    line="export ENSEMBL_REST_HOME=$(cd \"$(dirname \"${BASH_SOURCE[0]}\")\" >/dev/null 2>&1 && pwd)/ensembl-rest"
+  when: fix_catalyst_root_dir|bool
