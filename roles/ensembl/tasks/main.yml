@@ -83,4 +83,4 @@
        - ensembl-compara
        - ensembl-funcgen
        - ensembl-variation
-  when: repos_exist
+  when: paths_set
