@@ -77,7 +77,7 @@
 - name: Install Ensembl repo cpan dependencies
   shell: ". {{ PERL_RC | default('~/.bashrc') }} && cpanm -v --installdeps --with-recommends --notest --cpanfile={{ ensembl_install_dir }}/{{ item }}/cpanfile ."
   args:
-    chdir="{{ ensembl_install_dir }}/{{ item }}"
+    chdir: "{{ ensembl_install_dir }}/{{ item }}"
   with_items:
        - ensembl
        - ensembl-compara
