@@ -121,7 +121,7 @@
   with_items:
     - { src: "{{role_path}}/files/lock_disable.sh", dest: "/home/lock_disable.sh" }
     - { src: "{{role_path}}/files/lock_disable.sh.desktop", dest: "/etc/xdg/autostart/lock_disable.sh.desktop" }
-    - { src: "{{role_path}}/files/google-chrome.desktop", dest: "{{ homedir }}/Desktop/google-chrome.desktop" }
+#    - { src: "{{role_path}}/files/google-chrome.desktop", dest: "{{ homedir }}/Desktop/google-chrome.desktop" }
     - { src: "{{role_path}}/files/VEP.desktop", dest: "{{ homedir }}/Desktop/VEP.desktop" }
   when: desktop_dir_created
 
