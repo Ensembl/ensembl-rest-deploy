@@ -20,6 +20,9 @@
        - python-pip
        - virtualenv
        - libssl-dev
+       - libpng-dev
+       - uuid-dev
+       - e2fsprogs
   when: ansible_os_family == 'Debian'
 
 # Not yet tested on a RH based system
