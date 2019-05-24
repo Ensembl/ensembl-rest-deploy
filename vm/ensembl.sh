@@ -23,7 +23,7 @@ apt-get install -y build-essential libssl-dev libffi-dev python-pip git
 pip install ansible
 
 # Clone the repo for doing the install
-git clone -b vm_bugfix https://github.com/Ensembl/ensembl-rest-deploy.git
+git clone https://github.com/Ensembl/ensembl-rest-deploy.git
 
 # Clone the perlbrew repo for the install
 cd ensembl-rest-deploy
