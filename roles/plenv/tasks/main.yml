@@ -48,4 +48,3 @@
 # Eventually add this to cpanfile for REST
 - name: Ensure Daemon::Control installed
   shell: ". {{ PERL_RC | default('~/.bashrc') }} && cpanm install Daemon::Control"
-
