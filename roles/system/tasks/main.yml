@@ -1,14 +1,15 @@
 # role: system
 
 - name: Install common system packages (common)
-  action: apt pkg={{item}} state=installed
-  with_items:
+  apt:
+    pkg:
        - unzip
        - git
+    state: present
 
 - name: Install common system packages (Debian)
-  action: apt pkg={{item}} state=installed
-  with_items:
+  apt:
+    pkg:
        - build-essential
        - zlib1g-dev
        - emacs24
@@ -23,12 +24,13 @@
        - libpng-dev
        - uuid-dev
        - e2fsprogs
+    state: present
   when: ansible_os_family == 'Debian'
 
 # Not yet tested on a RH based system
 - name: Install common system packages (RedHat)
-  action: apt pkg={{item}} state=installed
-  with_items:
+  apt:
+    pkg:
        - gcc
        - gcc-c++
        - make
@@ -42,6 +44,7 @@
        - python-pip
        - python-virtualenv
        - openssl-devel
+    state: present
   when: ansible_os_family == 'RedHat'
 
 # Deal with an ubuntu specific bug with perl
