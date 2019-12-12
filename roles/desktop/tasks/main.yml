@@ -20,8 +20,8 @@
   register: mysql_passwd_set_again
 
 - name: Install common desktop packages
-  action: apt pkg={{item}} state=installed
-  with_items:
+  apt:
+    pkg:
        - unzip
        - git
        - build-essential
@@ -42,6 +42,7 @@
        - python-gnomekeyring
        - chromium-browser
        - ubuntu-mate-core
+    state: present
   when: dist_upgraded and mysql_passwd_set and mysql_passwd_set_again
   register: desktop_pkgs_installed
 

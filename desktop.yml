@@ -1,6 +1,6 @@
 ---
 - hosts: all
-  sudo: True
+  become: true
   vars_files:
     - vars/main.yml
 
@@ -19,6 +19,7 @@
 
   roles:
     - { role: system, when: install_system is defined and install_system }
-    - { role: plenv, perl_version: 5.14.4, become: false }
+#    - { role: plenv, perl_version: 5.14.4, become: false }
+    - { role: plenv, perl_version: 5.26.1, become: false }
     - { role: desktop }
 #    - { role: chrome }
