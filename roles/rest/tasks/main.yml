@@ -24,6 +24,18 @@
        - ensembl-rest
   when: repos_exist
 
+- name: Install Loftee VEP plugin from the Ensembl fork
+  git: repo="{{ item.repo }}" dest="{{ ensembl_install_dir }}/{{ item.dir }}" version="{{ item.version }}" clone=yes recursive="{{ item.recursive | default('no') }}" force="{{ item.force | default('no') }}"
+  with_items:
+       - { repo: 'https://github.com/Ensembl/loftee.git', dir: loftee, version: "{{ loftee_version }}" }
+  when: rest_dir_exists
+
+- name: Add Loftee to the path
+  lineinfile:
+    dest="{{ PERL_RC | default('~/.bashrc') }}"
+    line="export PATH={{ ensembl_install_dir }}/loftee:$PATH"
+  when: rest_dir_exists
+
 - name: Set LD_LIBRARY_PATH for local packages
   lineinfile: dest="{{ PERL_RC | default('~/.bashrc') }}" line="export LD_LIBRARY_PATH={{ ensembl_install_dir }}/local/lib/${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}"
   with_items:
