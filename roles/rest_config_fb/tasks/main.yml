@@ -12,9 +12,11 @@
   template: src="{{ item.src }}" dest="{{ item.dest }}" mode=0640
   with_items:
     - { src: "{{ rest_private_dir }}/conf/ensembl_rest.conf.j2", dest: "{{ ensembl_install_dir }}/ensembl-rest/configurations/production/ensembl_rest_fallback.conf" }
+
 - name: Add Fallback config file detection
   blockinfile:
     dest: "{{ PERL_RC | default('~/.bashrc') }}"
+    marker: "# {mark} fallback config"
     content: |
       if [ "$REST_FALLBACK" = true ];then
         export ENSEMBL_REST_CONFIG={{ ensembl_install_dir }}/ensembl-rest/configurations/production/ensembl_rest_fallback.conf 
