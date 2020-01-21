@@ -1,0 +1,16 @@
+# Role: rest_config for fallback
+
+- name: Loading variables of fallback it will override play vars_files
+  include_vars: "{{ rest_private_dir }}/conf/release_ebi_fallback.yml"
+
+- name: Create local copy of REST configs
+  local_action: template src="{{ item.src }}" dest="{{ item.dest }}" mode=0640
+  with_items:
+    - { src: "{{ rest_private_dir }}/conf/ensembl_rest.conf.j2", dest: "{{ rest_private_dir }}/conf/ensembl_rest_fallback.conf" }
+#  when: release_loaded
+
+- name: Deploying REST configs
+  template: src="{{ item.src }}" dest="{{ item.dest }}" mode=0640
+  with_items:
+    - { src: "{{ rest_private_dir }}/conf/ensembl_rest.conf.j2", dest: "{{ ensembl_install_dir }}/ensembl-rest/configurations/production/ensembl_rest_fallback.conf" }
+
