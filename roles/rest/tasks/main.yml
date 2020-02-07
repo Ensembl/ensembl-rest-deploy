@@ -175,4 +175,4 @@
 
 - name: Make Compara progressiveCactus bindings
   include: comparahal.yml
-  when: hal_file_dir is defined and install_progressivecactus is defined and install_progressivecactus|bool
+  when: hal_file_dir is defined and ((compara_halxs_compile is defined and compara_halxs_compile|bool) or (install_progressivecactus is defined and install_progressivecactus|bool))
