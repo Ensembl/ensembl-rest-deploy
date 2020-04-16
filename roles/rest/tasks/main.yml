@@ -30,10 +30,10 @@
        - { repo: 'https://github.com/Ensembl/loftee.git', dir: loftee, version: "{{ loftee_version }}" }
   when: rest_dir_exists
 
-- name: Add Loftee to the path
+- name: Add Loftee to the PERL5LIB
   lineinfile:
     dest="{{ PERL_RC | default('~/.bashrc') }}"
-    line="export PATH={{ ensembl_install_dir }}/loftee:$PATH"
+    line="export PERL5LIB={{ ensembl_install_dir }}/loftee:$PERL5LIB"
   when: rest_dir_exists
 
 - name: Set LD_LIBRARY_PATH for local packages
@@ -175,4 +175,4 @@
 
 - name: Make Compara progressiveCactus bindings
   include: comparahal.yml
-  when: hal_file_dir is defined and install_progressivecactus is defined and install_progressivecactus|bool
+  when: hal_file_dir is defined and ((compara_halxs_compile is defined and compara_halxs_compile|bool) or (install_progressivecactus is defined and install_progressivecactus|bool))

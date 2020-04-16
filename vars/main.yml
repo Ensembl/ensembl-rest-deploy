@@ -6,5 +6,3 @@ homedir: "/home/{{ ensembl_user }}"
 
 hdf5_version: 1.8.18
 validate_rest: true
-
-loftee_version: grch38
