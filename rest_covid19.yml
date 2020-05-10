@@ -14,8 +14,8 @@
     PROGRESSIVE_CACTUS_DIR: "{{ SHARED_PATH }}/paths/progressiveCactusFake/"
     install_my_own_hdf5: false
     install_progressivecactus: false
-    vcf_config_json: vcf_config_ebi.json.j2
-    ga_vcf_config_json: ga_vcf_config_ebi.json.j2
+    vcf_config_json: vcf_config.json.j2
+    ga_vcf_config_json: ga_vcf_config.json.j2
     compara_halxs_makefile: Makefile-Linuxbrew.PL
     fix_catalyst_root_dir: true
     compara_halxs_compile: true
