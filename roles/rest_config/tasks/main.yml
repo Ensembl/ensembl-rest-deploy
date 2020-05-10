@@ -5,10 +5,10 @@
   with_items:
     - { src: "{{ rest_private_dir }}/conf/ensembl_rest.conf.j2", dest: "{{ rest_private_dir }}/conf/ensembl_rest.conf" }
     - { src: "{{ rest_private_dir }}/conf/ensrest.psgi.j2", dest: "{{ rest_private_dir }}/conf/ensrest.psgi" }
-    # - { src: "{{ rest_private_dir }}/conf/ga_references.json.j2", dest: "{{ rest_private_dir }}/conf/ga_references_{{ human_assembly }}.json" }
-    # - { src: "{{ rest_private_dir }}/conf/{{ ga_vcf_config_json }}", dest: "{{ rest_private_dir }}/conf/ga_vcf_config_{{ human_assembly }}.json" }
+    - { src: "{{ rest_private_dir }}/conf/ga_references.json.j2", dest: "{{ rest_private_dir }}/conf/ga_references.json" }
+    - { src: "{{ rest_private_dir }}/conf/{{ ga_vcf_config_json }}", dest: "{{ rest_private_dir }}/conf/ga_vcf_config.json" }
     - { src: "{{ rest_private_dir }}/conf/{{ vcf_config_json }}", dest: "{{ rest_private_dir }}/conf/vcf_config.json" }
-    # - { src: "{{ rest_private_dir }}/conf/vep_plugin_config.txt.j2", dest: "{{ rest_private_dir }}/conf/vep_plugin_config.txt" }
+    - { src: "{{ rest_private_dir }}/conf/vep_plugin_config.txt.j2", dest: "{{ rest_private_dir }}/conf/vep_plugin_config.txt" }
 #  when: release_loaded
 
 - name: Deploying REST configs
@@ -16,10 +16,10 @@
   with_items:
     - { src: "{{ rest_private_dir }}/conf/ensembl_rest.conf.j2", dest: "{{ ensembl_install_dir }}/ensembl-rest/configurations/production/ensembl_rest.conf" }
     - { src: "{{ rest_private_dir }}/conf/ensrest.psgi.j2", dest: "{{ ensembl_install_dir }}/ensembl-rest/configurations/production/ensrest.psgi" }
-    # - { src: "{{ rest_private_dir }}/conf/ga_references.json.j2", dest: "{{ ga4gh_reference_config }}" }
-    # - { src: "{{ rest_private_dir }}/conf/{{ ga_vcf_config_json }}", dest: "{{ ga4gh_config }}" }
-    - { src: "{{ rest_private_dir }}/conf/{{ vcf_config_json }}", dest: "{{ vcf_config }}" }
-    # - { src: "{{ rest_private_dir }}/conf/vep_plugin_config.txt.j2", dest: "{{ vep_plugin_config }}" }
+    - { src: "{{ rest_private_dir }}/conf/ga_references.json.j2", dest: "{{ ensembl_install_dir }}/ensembl-rest/configurations/production/ga_references.json" }
+    - { src: "{{ rest_private_dir }}/conf/ga_vcf_config.json.j2", dest: "{{ ensembl_install_dir }}/ensembl-rest/configurations/production/ga_vcf_config.json" }
+    - { src: "{{ rest_private_dir }}/conf/{{ vcf_config_json }}", dest: "{{ ensembl_install_dir }}/ensembl-rest/configurations/production/vcf_config.json" }
+    - { src: "{{ rest_private_dir }}/conf/vep_plugin_config.txt.j2", dest: "{{ ensembl_install_dir }}/ensembl-rest/configurations/production/vep_plugin_config.txt" }
 #  when: release_loaded
 
 # # Special parameters for GRCh37
