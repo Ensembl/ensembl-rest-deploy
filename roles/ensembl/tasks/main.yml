@@ -27,7 +27,7 @@
        - { repo: 'https://github.com/bioperl/bioperl-live.git', dir: bioperl-live,  version: release-1-6-924 }
        - { repo: 'https://github.com/samtools/htslib.git', dir: htslib, version: 'master' }
        - { repo: 'https://github.com/Ensembl/ensembl-metadata.git', dir: ensembl-metadata }
-       - { repo: 'https://github.com/Ensembl/ensembl-taxonomy.git', dir: ensembl-taxonomy }
+       - { repo: 'https://github.com/Ensembl/ensembl-taxonomy.git', dir: ensembl-taxonomy, version: 'main' }
   when: ensembl_dir_exists
   register: repos_exist
 
